@@ -1,6 +1,8 @@
 package api;
 
-class NodeData implements node_data {
+import org.jetbrains.annotations.NotNull;
+
+class NodeData implements node_data, Comparable<node_data> {
     private final int _key;
     private geo_location _location;
     private int _tag;
@@ -110,5 +112,24 @@ class NodeData implements node_data {
     @Override
     public void setTag(int t) {
         this._tag = t;
+    }
+
+    /**
+     * Overrides the compareTo() method implemented by Comparable interface
+     * This method is used to compare the tag value of two nodes and used in this project solely
+     * for comparing the minimal distance in the shortestPath method based on Dijkstra's algorithm
+     * This method prevents NullPointerException and ClassCastException bt catching them before comparing.
+     * For more information about the comparable interface:
+     * https://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html
+     *
+     * @param o the object to be compared.
+     * @return a negative integer, zero, or a positive integer as this object
+     * is less than, equal to, or greater than the specified object.
+     */
+    @Override
+    public int compareTo(node_data o) {
+        if (this._tag > o.getTag()) return 1;
+        else if (this._tag < o.getTag()) return -1;
+        return 0;
     }
 }

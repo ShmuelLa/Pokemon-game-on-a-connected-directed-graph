@@ -1,9 +1,6 @@
 package api;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class DWGraph_Algo implements dw_graph_algorithms {
     directed_weighted_graph _algo_graph = new DWGraph_DS();
@@ -111,39 +108,36 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      */
     @Override
     public double shortestPathDist(int src, int dest) {
-        if (this._g.nodeSize()<=1 || this._g.getNode(src)==null || this._g.getNode(dest)==null) return -1;
+        if (this._algo_graph.nodeSize()<=1 || this._algo_graph.getNode(src)==null || this._algo_graph.getNode(dest)==null) return -1;
         if (src == dest) return 0.0;
-        PriorityQueue<node_info> pq = new PriorityQueue<>();
+        PriorityQueue<node_data> pq = new PriorityQueue<>();
         double result;
-        node_info cur = this._g.getNode(src);
-        pq.add(cur);
-        cur.setTag(0);
+        node_data current = this._algo_graph.getNode(src);
+        pq.add(current);
+        current.setTag(0);
         while (!pq.isEmpty()) {
-            cur = pq.poll();
-            if (!Objects.equals(cur.getInfo(), "y")) {
-                cur.setInfo("y");
-                if (cur.getKey() == dest) break;
-                for (node_info n : this._g.getV(cur.getKey())) {
-                    if (n.getTag() == -1) {
-                        n.setTag(Double.MAX_VALUE);
+            current = pq.poll();
+            if (!Objects.equals(current.getInfo(), "y")) {
+                current.setInfo("y");
+                if (current.getKey() == dest) break;
+
+                for (edge_data e : this._algo_graph.getE(current.getKey())) {
+                    if (this._algo_graph.getNode(e.getDest()).getTag() == -1) {
+                        this._algo_graph.getNode(e.getDest()).setTag(Integer.MAX_VALUE);
                     }
-                    double tmp_tag = cur.getTag()+this._g.getEdge(cur.getKey(),n.getKey());
-                    if (tmp_tag < n.getTag()) {
-                        n.setTag(tmp_tag);
-                        pq.add(n);
+                    double tmp_tag = current.getTag()+this._algo_graph.getEdge(current.getKey(),e.getDest()).getWeight();
+                    if (tmp_tag < this._algo_graph.getNode(e.getDest()).getTag()) {
+                        this._algo_graph.getNode(e.getDest()).setTag((int) tmp_tag);
+                        pq.add(this._algo_graph.getNode(e.getDest()));
                     }
                 }
             }
         }
-        cur = this._g.getNode(dest);
-        result = cur.getTag();
-        if (!Objects.equals(cur.getInfo(), "y")) return -1;
+        current = this._algo_graph.getNode(dest);
+        result = current.getTag();
+        if (!Objects.equals(current.getInfo(), "y")) return -1;
         this.reset();
         return result;
-
-
-
-        return 0;
     }
 
     /**
@@ -185,5 +179,18 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     @Override
     public boolean load(String file) {
         return false;
+    }
+
+    /**
+     * Used to reset the tags and metadata of each node after finishing
+     * BFS and Dijkstra's algorithms
+     */
+    public void reset() {
+        for (node_data n : this._algo_graph.getV()) {
+            if (n.getTag() != 0 || n.getInfo() != null) {
+                n.setTag(-1);
+                n.setInfo(null);
+            }
+        }
     }
 }

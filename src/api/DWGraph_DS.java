@@ -153,8 +153,10 @@ public class DWGraph_DS implements directed_weighted_graph {
     public node_data removeNode(int key) {
         if (this._graph_nodes.containsKey(key)) {
             node_data tmp_node = this._graph_nodes.get(key);
-            for (edge_data e : this.getE(key)) {
-                this.removeEdge(key,e.getDest());
+            for (Iterator<edge_data> e = this.getE(key).iterator(); e.hasNext();) {
+                edge_data tmp_edge = e.next();
+                e.remove();
+                this.removeEdge(key,tmp_edge.getDest());
             }
             for (Iterator<Integer> r_e = this._graph_edges.get(key)._received_edges.iterator(); r_e.hasNext();) {
                 int tmp = r_e.next();
