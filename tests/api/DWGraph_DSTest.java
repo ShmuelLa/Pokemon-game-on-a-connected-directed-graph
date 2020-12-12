@@ -12,7 +12,7 @@ class DWGraph_DSTest {
      */
     public static directed_weighted_graph mainTestGraph(){
         directed_weighted_graph wg = new DWGraph_DS();
-        for (int i=1; i<=16; i++) {
+        for (int i=1; i<=5; i++) {
             node_data tmp_node = new NodeData(i);
             wg.addNode(tmp_node);
         }
@@ -30,5 +30,28 @@ class DWGraph_DSTest {
         assertEquals(5,wg.edgeSize());
         assertEquals(7,wg.getEdge(3,5).getWeight());
         assertEquals(4,wg.getEdge(5,3).getWeight());
+    }
+
+    @Test
+    void remove_edge() {
+        directed_weighted_graph wg = mainTestGraph();
+        assertEquals(5,wg.edgeSize());
+        assertEquals(7,wg.getEdge(3,5).getWeight());
+        assertEquals(4,wg.getEdge(5,3).getWeight());
+        wg.removeEdge(3,5);
+        assertEquals(4,wg.edgeSize());
+        assertNull(wg.getEdge(3,5));
+        assertEquals(4,wg.getEdge(5,3).getWeight());
+    }
+
+    @Test
+    void remove_node() {
+        directed_weighted_graph wg = mainTestGraph();
+        assertEquals(5,wg.edgeSize());
+        assertEquals(7,wg.getEdge(3,5).getWeight());
+        assertEquals(4,wg.getEdge(5,3).getWeight());
+        wg.removeNode(3);
+        assertEquals(2,wg.edgeSize());
+        assertNull(wg.getEdge(3,5));
     }
 }

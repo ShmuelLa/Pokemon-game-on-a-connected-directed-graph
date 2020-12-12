@@ -1,10 +1,8 @@
 package api;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import javax.swing.text.html.HTMLDocument;
+import java.util.*;
 
 public class DWGraph_DS implements directed_weighted_graph {
     private HashMap<Integer,node_data> _graph_nodes;
@@ -14,7 +12,7 @@ public class DWGraph_DS implements directed_weighted_graph {
 
     public class EdgeDB {
         private HashMap<Integer,edge_data> _neighbors;
-        private Collection<Integer> _received_edges;
+        private HashSet<Integer> _received_edges;
 
         private EdgeDB() {
             this._neighbors = new HashMap<>();
@@ -63,6 +61,9 @@ public class DWGraph_DS implements directed_weighted_graph {
      */
     @Override
     public edge_data getEdge(int src, int dest) {
+        if (!this._graph_nodes.containsKey(src) || !this._graph_nodes.containsKey(dest)) {
+            return null;
+        }
         return this._graph_edges.get(src)._neighbors.get(dest);
     }
 
@@ -155,11 +156,17 @@ public class DWGraph_DS implements directed_weighted_graph {
             for (edge_data e : this.getE(key)) {
                 this.removeEdge(key,e.getDest());
             }
-            if (this._graph_edges.get(key)._received_edges.size() > 0) {
-                for (Integer n : this._graph_edges.get(key)._received_edges) {
+            for (Iterator<Integer> r_e = this._graph_edges.get(key)._received_edges.iterator(); r_e.hasNext();) {
+                int tmp = r_e.next();
+                r_e.remove();
+                this.removeEdge(tmp,key);
+            }
+/*            if (this._graph_edges.get(key)._received_edges.size() > 0) {
+                HashSet<Integer> tmp_set = this._graph_edges.get(key)._received_edges;
+                for (Integer n : tmp_set) {
                     this.removeEdge(n,key);
                 }
-            }
+            }*/
             this._graph_nodes.remove(key);
             this._graph_edges.remove(key);
             return tmp_node;
