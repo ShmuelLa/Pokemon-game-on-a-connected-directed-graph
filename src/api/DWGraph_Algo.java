@@ -120,7 +120,6 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             if (!Objects.equals(current.getInfo(), "y")) {
                 current.setInfo("y");
                 if (current.getKey() == dest) break;
-
                 for (edge_data e : this._algo_graph.getE(current.getKey())) {
                     if (this._algo_graph.getNode(e.getDest()).getTag() == -1) {
                         this._algo_graph.getNode(e.getDest()).setTag(Integer.MAX_VALUE);
@@ -135,7 +134,10 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         }
         current = this._algo_graph.getNode(dest);
         result = current.getTag();
-        if (!Objects.equals(current.getInfo(), "y")) return -1;
+        if (!Objects.equals(current.getInfo(), "y")) {
+            this.reset();
+            return -1;
+        }
         this.reset();
         return result;
     }
@@ -152,7 +154,44 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      */
     @Override
     public List<node_data> shortestPath(int src, int dest) {
-        return null;
+        if (this._algo_graph.nodeSize()<=1 || this._algo_graph.getNode(src)==null || this._algo_graph.getNode(dest)==null) return null;
+        if (src == dest) return new ArrayList<>();
+        PriorityQueue<node_data> pq = new PriorityQueue<>();
+        List<node_data> result = new ArrayList<>();
+        HashMap<node_data,node_data> parent = new HashMap<>();
+        node_data current = this._algo_graph.getNode(src);
+        pq.add(current);
+        current.setTag(0);
+        while (!pq.isEmpty()) {
+            current = pq.poll();
+            if (!Objects.equals(current.getInfo(),"y")) {
+                current.setInfo("y");
+                if (current.getKey() == dest) break;
+                for (edge_data e : this._algo_graph.getE(current.getKey())) {
+                    if (this._algo_graph.getNode(e.getDest()).getTag() == -1) {
+                        this._algo_graph.getNode(e.getDest()).setTag(Integer.MAX_VALUE);
+                    }
+                    double tmp_tag = current.getTag()+this._algo_graph.getEdge(current.getKey(),e.getDest()).getWeight();
+                    if (tmp_tag < this._algo_graph.getNode(e.getDest()).getTag()) {
+                        this._algo_graph.getNode(e.getDest()).setTag((int) tmp_tag);
+                        parent.put(this._algo_graph.getNode(e.getDest()),current);
+                        pq.add(this._algo_graph.getNode(e.getDest()));
+                    }
+                }
+            }
+        }
+        current = this._algo_graph.getNode(dest);
+        if (!Objects.equals(current.getInfo(), "y")) {
+            this.reset();
+            return null;
+        }
+        result.add(0,current);
+        while (current.getKey() != src) {
+            result.add(0,parent.get(current));
+            current = parent.get(current);
+        }
+        this.reset();
+        return result;
     }
 
     /**
