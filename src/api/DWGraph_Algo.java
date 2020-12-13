@@ -226,9 +226,9 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         for (node_data n :this._algo_graph.getV()) {
             graph_edges.addAll(this._algo_graph.getE(n.getKey()));
         }
-        String nodes = gson.toJson(this._algo_graph.getV());
         String result = "{\"Edges\":"+gson.toJson(graph_edges)
                 +",\"Nodes\":"+Arrays.toString(nodes_arr).replaceAll(" ","")+"}";
+        System.out.println(result);
         try {
             FileWriter output = new FileWriter(file);
             output.write(result);
@@ -269,7 +269,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
                     pos_arr[i] = Double.parseDouble(tmp_str[i]);
                 }
                 node_data tmp_node = new NodeData(key);
-                geo_location tmp_location = new GeoLocation(pos_arr[0],pos_arr[1],pos_arr[2],0);
+                geo_location tmp_location = new GeoLocation(pos_arr[0],pos_arr[1],pos_arr[2]);
                 tmp_node.setLocation(tmp_location);
                 result.addNode(tmp_node);
             }

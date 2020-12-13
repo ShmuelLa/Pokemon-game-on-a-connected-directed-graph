@@ -2,8 +2,7 @@ package api;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import org.jetbrains.annotations.NotNull;
-import javax.swing.text.html.HTMLDocument;
+
 import java.util.*;
 
 public class DWGraph_DS implements directed_weighted_graph {
@@ -186,7 +185,7 @@ public class DWGraph_DS implements directed_weighted_graph {
      */
     @Override
     public edge_data removeEdge(int src, int dest) {
-        if (this._graph_edges.get(src).hasNI(dest) && src != dest) {
+        if ((this._graph_edges.get(src).hasNI(dest) || this._graph_edges.get(dest).hasNI(src)) && src != dest) {
             edge_data tmp_edge = this._graph_edges.get(src)._neighbors.get(dest);
             this._graph_edges.get(src)._neighbors.remove(dest);
             this._graph_edges.get(dest)._received_edges.remove(src);

@@ -2,14 +2,13 @@ package api;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import org.jetbrains.annotations.NotNull;
 
 class NodeData implements node_data, Comparable<node_data> {
-    @SerializedName("id")
-    private final int _key;
     @Expose
     @SerializedName("pos")
     private geo_location _location;
+    @SerializedName("id")
+    private final int _key;
     private int _tag;
     private double _weight;
     private String _str;

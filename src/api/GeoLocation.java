@@ -13,20 +13,17 @@ public class GeoLocation implements geo_location {
     @Expose
     @SerializedName("z")
     double _z;
-    double _distance;
 
     public GeoLocation() {
         this._x = 0.0;
         this._y = 0.0;
         this._z = 0.0;
-        this._distance = 0.0;
     }
 
-    public GeoLocation(double x, double y, double z, double distance) {
+    public GeoLocation(double x, double y, double z) {
         this._x = x;
         this._y = y;
         this._z = z;
-        this._distance = distance;
     }
 
     @Override
@@ -46,6 +43,10 @@ public class GeoLocation implements geo_location {
 
     @Override
     public double distance(geo_location g) {
-        return this._distance;
+        double dx = this._x - g.x();
+        double dy = this._y - g.y();
+        double dz = this._z - g.z();
+        double t = (dx*dx+dy*dy+dz*dz);
+        return Math.sqrt(t);
     }
 }
