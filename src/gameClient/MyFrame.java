@@ -7,7 +7,6 @@ import api.node_data;
 import gameClient.util.Point3D;
 import gameClient.util.Range;
 import gameClient.util.Range2D;
-
 import javax.sound.sampled.AudioInputStream;
 import javax.swing.*;
 import java.awt.*;
@@ -27,6 +26,8 @@ public class MyFrame extends JFrame{
 	private int _ind;
 	private Arena _ar;
 	private gameClient.util.Range2Range _w2f;
+	private Image _double_buffered_image;
+	private Graphics _double_buffered_graphics;
 
 	MyFrame(String a) {
 		super(a);
@@ -44,17 +45,25 @@ public class MyFrame extends JFrame{
 		directed_weighted_graph g = _ar.getGraph();
 		_w2f = Arena.w2f(g,frame);
 	}
+
 	public void paint(Graphics g) {
+		_double_buffered_image = createImage(getWidth(),getHeight());
+		_double_buffered_graphics = _double_buffered_image.getGraphics();
+		paintComponent(_double_buffered_graphics);
+		g.drawImage(_double_buffered_image,0,0,this);
+	}
+
+	public void paintComponent(Graphics g) {
 		int w = this.getWidth();
 		int h = this.getHeight();
 		g.clearRect(0, 0, w, h);
-	//	updateFrame();
+		//updateFrame();
 		drawPokemons(g);
 		drawGraph(g);
 		drawAgants(g);
 		drawInfo(g);
-		
 	}
+
 	private void drawInfo(Graphics g) {
 		List<String> str = _ar.get_info();
 		String dt = "none";
@@ -78,6 +87,7 @@ public class MyFrame extends JFrame{
 			}
 		}
 	}
+
 	private void drawPokemons(Graphics g) {
 		List<CL_Pokemon> fs = _ar.getPokemons();
 		if(fs!=null) {
@@ -116,6 +126,7 @@ public class MyFrame extends JFrame{
 			}
 		}
 	}
+
 	private void drawNode(node_data n, int r, Graphics g) {
 		geo_location pos = n.getLocation();
 		geo_location fp = this._w2f.world2frame(pos);

@@ -129,3 +129,7 @@ Implemented in `mainTestGraph()` and `mainTestGraphAlg()` accordingly
 - https://github.com/google/gson
 - https://futurestud.io/tutorials/gson-getting-started-with-java-json-serialization-deserialization
 - https://www.youtube.com/watch?v=HSuVtkdej8Q
+
+### JFrame
+- https://www.youtube.com/watch?v=4T3WJEH7zrc
+- https://www.youtube.com/watch?v=Kmgo00avvEw
