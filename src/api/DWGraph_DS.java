@@ -1,12 +1,18 @@
 package api;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import org.jetbrains.annotations.NotNull;
 import javax.swing.text.html.HTMLDocument;
 import java.util.*;
 
 public class DWGraph_DS implements directed_weighted_graph {
-    private HashMap<Integer,node_data> _graph_nodes;
+    @Expose
+    @SerializedName("Edges")
     private HashMap<Integer,EdgeDB> _graph_edges;
+    @Expose
+    @SerializedName("Nodes")
+    private HashMap<Integer,node_data> _graph_nodes;
     private int _edge_size;
     private int _mode_count;
 

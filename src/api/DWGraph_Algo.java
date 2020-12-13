@@ -1,5 +1,13 @@
 package api;
 
+import com.google.gson.*;
+
+import java.io.*;
+
+import org.json.*;
+
+import javax.swing.*;
+import java.lang.reflect.Type;
 import java.util.*;
 
 public class DWGraph_Algo implements dw_graph_algorithms {
@@ -203,6 +211,18 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      */
     @Override
     public boolean save(String file) {
+        Gson gson = new GsonBuilder().
+                excludeFieldsWithoutExposeAnnotation().
+                create();
+        String result = gson.toJson(this._algo_graph);
+/*        StringBuilder result = new StringBuilder();
+        for (node_data n : this._algo_graph.getV()) {
+            for (edge_data e : this._algo_graph.getE(n.getKey())) {
+                String edge_json = gson.toJson(e);
+                result.append(edge_json);
+            }
+        }*/
+        System.out.println(result+"\n\n\n\n");
         return false;
     }
 
@@ -217,7 +237,41 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      */
     @Override
     public boolean load(String file) {
-        return false;
+        boolean flag = false;
+        try {
+            File fi = new File(file);
+            Scanner sc = new Scanner(fi);
+            directed_weighted_graph result = new DWGraph_DS();
+            JsonElement file_element = JsonParser.parseReader(new FileReader(fi));
+            JsonObject file_object = file_element.getAsJsonObject();
+            JsonArray edges_arr = file_object.get("Edges").getAsJsonArray();
+            JsonArray nodes_arr = file_object.get("Nodes").getAsJsonArray();
+            for (JsonElement node : nodes_arr) {
+                JsonObject node_object = node.getAsJsonObject();
+                Integer key = node_object.get("id").getAsInt();
+                String[] tmp_str = node_object.getAsJsonPrimitive("pos").getAsString().split(",");
+                Double[] pos_arr = new Double[tmp_str.length];
+                for (int i=0; i<tmp_str.length; i++) {
+                    pos_arr[i] = Double.parseDouble(tmp_str[i]);
+                }
+                node_data tmp_node = new NodeData(key);
+                geo_location tmp_location = new GeoLocation(pos_arr[0],pos_arr[1],pos_arr[2],0);
+                tmp_node.setLocation(tmp_location);
+                result.addNode(tmp_node);
+            }
+            for (JsonElement edge : edges_arr) {
+                JsonObject edge_object = edge.getAsJsonObject();
+                Integer src = edge_object.get("src").getAsInt();
+                Integer dest = edge_object.get("dest").getAsInt();
+                Double weight = edge_object.get("w").getAsDouble();
+                result.connect(src,dest,weight);
+            }
+            this._algo_graph = result;
+            flag = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return flag;
     }
 
     /**

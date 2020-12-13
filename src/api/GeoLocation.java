@@ -1,9 +1,17 @@
 package api;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class GeoLocation implements geo_location {
+    @Expose
+    @SerializedName("")
     double _x;
+    @Expose
     double _y;
+    @Expose
     double _z;
+    @Expose
     double _distance;
 
     public GeoLocation() {

@@ -74,9 +74,17 @@ class DWGraph_AlgoTest {
 
     @Test
     void save() {
+        directed_weighted_graph dg = DWGraph_DSTest.mainTestGraph();
+        dw_graph_algorithms dga = new DWGraph_Algo();
+        dga.init(dg);
+        dga.save("zibi");
     }
 
     @Test
     void load() {
+        directed_weighted_graph dg = DWGraph_DSTest.mainTestGraph();
+        dw_graph_algorithms dga = new DWGraph_Algo();
+        dga.init(dg);
+        dga.load("data/A0");
     }
 }

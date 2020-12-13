@@ -13,7 +13,9 @@ class DWGraph_DSTest {
     public static directed_weighted_graph mainTestGraph(){
         directed_weighted_graph wg = new DWGraph_DS();
         for (int i=1; i<=5; i++) {
+            geo_location location = new GeoLocation(2.22,3.33,4.44,5.55);
             node_data tmp_node = new NodeData(i);
+            tmp_node.setLocation(location);
             wg.addNode(tmp_node);
         }
         wg.connect(1,2,3);

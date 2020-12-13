@@ -125,6 +125,6 @@ Implemented in `mainTestGraph()` and `mainTestGraphAlg()` accordingly
 ### PriorityQueue and Comparable Usage
 - https://www.youtube.com/watch?v=c4ES6jGxqEw
 
-### Serialization
-- https://www.youtube.com/watch?v=6B6vp0jZnb0
-- https://stackoverflow.com/questions/10378855/java-io-invalidclassexception-local-class-incompatible
+### Gson
+- https://github.com/google/gson
+- https://futurestud.io/tutorials/gson-getting-started-with-java-json-serialization-deserialization
