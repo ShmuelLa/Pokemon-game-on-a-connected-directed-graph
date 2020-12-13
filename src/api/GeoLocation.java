@@ -15,10 +15,10 @@ public class GeoLocation implements geo_location {
     double _distance;
 
     public GeoLocation() {
-        this._x = 0;
-        this._y = 0;
-        this._z = 0;
-        this._distance = 0;
+        this._x = 0.0;
+        this._y = 0.0;
+        this._z = 0.0;
+        this._distance = 0.0;
     }
 
     public GeoLocation(double x, double y, double z, double distance) {

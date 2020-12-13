@@ -128,3 +128,4 @@ Implemented in `mainTestGraph()` and `mainTestGraphAlg()` accordingly
 ### Gson
 - https://github.com/google/gson
 - https://futurestud.io/tutorials/gson-getting-started-with-java-json-serialization-deserialization
+- https://www.youtube.com/watch?v=HSuVtkdej8Q

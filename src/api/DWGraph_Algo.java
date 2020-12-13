@@ -222,7 +222,11 @@ public class DWGraph_Algo implements dw_graph_algorithms {
                 result.append(edge_json);
             }
         }*/
-        System.out.println(result+"\n\n\n\n");
+
+/*        {"Edges":[{"src":0,"w":1.4004465106761335,"dest":1},...
+            "Nodes":[{"pos":"35.18753053591606,32.10378225882353,0.0","id":0},...*/
+
+        System.out.println(result+"\n");
         return false;
     }
 

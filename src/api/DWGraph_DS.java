@@ -228,4 +228,54 @@ public class DWGraph_DS implements directed_weighted_graph {
     public int getMC() {
         return this._mode_count;
     }
+
+    /**
+     * This method overrides the equals method from Object interface.
+     * It is used for graph comparing. Used vastly in testing and debugging.
+     * It uses the toString method which is override as well for this project.
+     *
+     * For more information and for the full doc:
+     * https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html
+     *
+     * @param obj the reference object with which to compare.
+     * @return boolean - if this object is the same as the obj
+     */
+    @Override
+    public boolean equals(Object obj) {
+        directed_weighted_graph g_obj = (DWGraph_DS) obj;
+        if (this._edge_size != g_obj.edgeSize() || this.nodeSize() != g_obj.nodeSize()) return false;
+        return Objects.equals(this.toString(), g_obj.toString());
+    }
+
+    /**
+     * Returns a string representation of the graph. This method overrides Objects
+     * toString() method. It represents each and every node Id in the graph alongside with it's neighbor count.
+     * this method also records the node and edge size of the graph.
+     *
+     * For more information and for the full doc:
+     * https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html
+     *
+     * @return String - representation of the graph.
+     */
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        SortedSet<Integer> s_ni = new TreeSet<>();
+        result.append("Total Nodes: ").append(this.nodeSize()).append(" ||  Total edges: ").append(this._edge_size);
+        result.append("\n");
+        for (node_data n : this.getV()) {
+            result.append("Node: ").append(n.getKey());
+            result.append(" | Ni Count: ").append(this.getE(n.getKey())).append(" | NiKey->Weight: ");
+            for (edge_data n1 : this.getE(n.getKey())) {
+                s_ni.add(n1.getDest());
+            }
+            for (Integer in : s_ni) {
+                result.append(this._graph_nodes.get(in).getKey()).append("->");
+                result.append(this.getEdge(n.getKey(), in)).append(" | ");
+            }
+            s_ni.clear();
+            result.append("\n");
+        }
+        return result.toString();
+    }
 }
