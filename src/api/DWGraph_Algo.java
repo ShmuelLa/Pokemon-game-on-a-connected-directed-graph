@@ -214,18 +214,12 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         Gson gson = new GsonBuilder().
                 excludeFieldsWithoutExposeAnnotation().
                 create();
-        String result = gson.toJson(this._algo_graph);
-/*        StringBuilder result = new StringBuilder();
-        for (node_data n : this._algo_graph.getV()) {
-            for (edge_data e : this._algo_graph.getE(n.getKey())) {
-                String edge_json = gson.toJson(e);
-                result.append(edge_json);
-            }
-        }*/
-
-/*        {"Edges":[{"src":0,"w":1.4004465106761335,"dest":1},...
-            "Nodes":[{"pos":"35.18753053591606,32.10378225882353,0.0","id":0},...*/
-
+        String result = null;
+        ArrayList<edge_data> graph_edges = new ArrayList<>();
+        for (node_data n :this._algo_graph.getV()) {
+            graph_edges.addAll(this._algo_graph.getE(n.getKey()));
+        }
+        result = "{\"Edges\":"+gson.toJson(graph_edges)+",\"Nodes\":"+gson.toJson(this._algo_graph.getV())+"}";
         System.out.println(result+"\n");
         return false;
     }
