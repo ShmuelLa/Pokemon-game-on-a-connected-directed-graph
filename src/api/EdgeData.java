@@ -11,7 +11,7 @@ class EdgeData implements edge_data {
     @SerializedName("w")
     private double _weight;
     @Expose
-    @SerializedName("dst")
+    @SerializedName("dest")
     private int _dest;
     private int _tag;
     private String _str;

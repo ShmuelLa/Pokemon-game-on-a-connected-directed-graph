@@ -2,6 +2,9 @@ package api;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -73,18 +76,25 @@ class DWGraph_AlgoTest {
     }
 
     @Test
-    void save() {
+    void save_load() {
         directed_weighted_graph dg = DWGraph_DSTest.mainTestGraph();
         dw_graph_algorithms dga = new DWGraph_Algo();
         dga.init(dg);
-        dga.save("zibi");
-    }
-
-    @Test
-    void load() {
-        directed_weighted_graph dg = DWGraph_DSTest.mainTestGraph();
-        dw_graph_algorithms dga = new DWGraph_Algo();
-        dga.init(dg);
-        dga.load("data/A0");
+        dga.save("tests/IO/maintestgraph.json");
+        directed_weighted_graph dg2 = new DWGraph_DS();
+        dw_graph_algorithms dga2 = new DWGraph_Algo();
+        dga2.init(dg2);
+        dga2.load("tests/IO/maintestgraph.json");
+        assertEquals(dga.getGraph(),dga2.getGraph());
+        try {
+            String a0 = Files.readString(Path.of("data/A0"));
+            dga.load("data/A0");
+            dga.save("tests/IO/2nd");
+            String a2 = Files.readString(Path.of("tests/IO/2nd"));
+            assertEquals(a0,a2);
+        } catch (IOException e) {
+            System.out.println("Wrong Input");
+            e.printStackTrace();
+        }
     }
 }

@@ -5,13 +5,14 @@ import com.google.gson.annotations.SerializedName;
 
 public class GeoLocation implements geo_location {
     @Expose
-    @SerializedName("")
+    @SerializedName("x")
     double _x;
     @Expose
+    @SerializedName("y")
     double _y;
     @Expose
+    @SerializedName("z")
     double _z;
-    @Expose
     double _distance;
 
     public GeoLocation() {

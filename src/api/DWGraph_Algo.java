@@ -211,16 +211,32 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      */
     @Override
     public boolean save(String file) {
-        Gson gson = new GsonBuilder().
-                excludeFieldsWithoutExposeAnnotation().
-                create();
-        String result = null;
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         ArrayList<edge_data> graph_edges = new ArrayList<>();
+        String[] nodes_arr = new String[this._algo_graph.getV().size()];
+        int index = 0;
+        for (node_data n :this._algo_graph.getV()) {
+            nodes_arr[index] = "{\"pos\":\""+gson.toJson(n.getLocation())
+                    .replaceAll("\\{\"x\":","")
+                    .replaceAll("\"y\":","")
+                    .replaceAll("\"z\":","")
+                    .replaceAll("}","")+"\",\"id\":"+n.getKey()+"}";
+            index++;
+        }
         for (node_data n :this._algo_graph.getV()) {
             graph_edges.addAll(this._algo_graph.getE(n.getKey()));
         }
-        result = "{\"Edges\":"+gson.toJson(graph_edges)+",\"Nodes\":"+gson.toJson(this._algo_graph.getV())+"}";
-        System.out.println(result+"\n");
+        String nodes = gson.toJson(this._algo_graph.getV());
+        String result = "{\"Edges\":"+gson.toJson(graph_edges)
+                +",\"Nodes\":"+Arrays.toString(nodes_arr).replaceAll(" ","")+"}";
+        try {
+            FileWriter output = new FileWriter(file);
+            output.write(result);
+            output.flush();
+        } catch (IOException e) {
+            System.out.println("Wrong Input");
+            e.printStackTrace();
+        }
         return false;
     }
 

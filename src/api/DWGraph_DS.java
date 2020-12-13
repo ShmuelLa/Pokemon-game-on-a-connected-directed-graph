@@ -265,13 +265,13 @@ public class DWGraph_DS implements directed_weighted_graph {
         result.append("\n");
         for (node_data n : this.getV()) {
             result.append("Node: ").append(n.getKey());
-            result.append(" | Ni Count: ").append(this.getE(n.getKey())).append(" | NiKey->Weight: ");
+            result.append(" | Ni Count: ").append(this.getE(n.getKey()).size()).append(" | NiKey->Weight: ");
             for (edge_data n1 : this.getE(n.getKey())) {
                 s_ni.add(n1.getDest());
             }
             for (Integer in : s_ni) {
                 result.append(this._graph_nodes.get(in).getKey()).append("->");
-                result.append(this.getEdge(n.getKey(), in)).append(" | ");
+                result.append(this.getEdge(n.getKey(),in).getWeight()).append(" | ");
             }
             s_ni.clear();
             result.append("\n");
