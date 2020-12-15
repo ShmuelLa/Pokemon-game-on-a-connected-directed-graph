@@ -1,12 +1,9 @@
 package gameClient;
 
 import Server.Game_Server_Ex2;
-import api.directed_weighted_graph;
-import api.edge_data;
-import api.game_service;
+import api.*;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -15,6 +12,7 @@ import java.util.List;
 public class Ex2_Client implements Runnable{
 	private static MyFrame _win;
 	private static Arena _ar;
+
 	public static void main(String[] a) {
 		Thread client = new Thread(new Ex2_Client());
 		client.start();
@@ -39,7 +37,9 @@ public class Ex2_Client implements Runnable{
 		while(game.isRunning()) {
 			moveAgants(game, gg);
 			try {
-				if(ind%1==0) {_win.repaint();}
+				if(ind%1==0) {
+					_win.repaint();
+				}
 				Thread.sleep(dt);
 				ind++;
 			}
@@ -52,6 +52,7 @@ public class Ex2_Client implements Runnable{
 		System.out.println(res);
 		System.exit(0);
 	}
+
 	/** 
 	 * Moves each of the agents along the edge,
 	 * in case the agent is on a node the next destination (next edge) is chosen (randomly).
@@ -80,6 +81,7 @@ public class Ex2_Client implements Runnable{
 			}
 		}
 	}
+
 	/**
 	 * a very simple random walk implementation!
 	 * @param g
@@ -97,6 +99,7 @@ public class Ex2_Client implements Runnable{
 		ans = itr.next().getDest();
 		return ans;
 	}
+
 	private void init(game_service game) {
 		String g = game.getGraph();
 		String fs = game.getPokemons();
@@ -108,8 +111,6 @@ public class Ex2_Client implements Runnable{
 		_win = new MyFrame("test Ex2");
 		_win.setSize(1000, 700);
 		_win.update(_ar);
-
-	
 		_win.show();
 		String info = game.toString();
 		JSONObject line;
@@ -121,7 +122,9 @@ public class Ex2_Client implements Runnable{
 			System.out.println(game.getPokemons());
 			int src_node = 0;  // arbitrary node, you should start at one of the pokemon
 			ArrayList<CL_Pokemon> cl_fs = Arena.json2Pokemons(game.getPokemons());
-			for(int a = 0;a<cl_fs.size();a++) { Arena.updateEdge(cl_fs.get(a),gg);}
+			for(int a = 0;a<cl_fs.size();a++) {
+				Arena.updateEdge(cl_fs.get(a),gg);
+			}
 			for(int a = 0;a<rs;a++) {
 				int ind = a%cl_fs.size();
 				CL_Pokemon c = cl_fs.get(ind);

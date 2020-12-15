@@ -1,7 +1,10 @@
 package gameClient;
 import api.edge_data;
+import com.google.gson.*;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
+
+import java.io.FileReader;
 
 public class CL_Pokemon {
 	private edge_data _edge;
@@ -20,19 +23,39 @@ public class CL_Pokemon {
 		min_dist = -1;
 		min_ro = -1;
 	}
+
+/*	public CL_Pokemon(JsonElement json) {
+		JsonElement jsonElement = JsonParser.parseReader(json);
+		JsonObject file_object = file_element.getAsJsonObject();
+		JsonArray edges_arr = file_object.get("Edges").getAsJsonArray();
+		JsonArray nodes_arr = file_object.get("Nodes").getAsJsonArray();
+		Gson gson = new Gson();
+		gson.toJson(json);
+		_type = gson.
+		//	_speed = s;
+		_value = v;
+		set_edge(e);
+		_pos = p;
+		min_dist = -1;
+		min_ro = -1;
+	}*/
+
 	public static CL_Pokemon init_from_json(String json) {
 		CL_Pokemon ans = null;
 		try {
 			JSONObject p = new JSONObject(json);
-			int id = p.getInt("id");
-
+			int id = p.getInt("game.getPokemons()");
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
 		return ans;
 	}
-	public String toString() {return "F:{v="+_value+", t="+_type+"}";}
+
+	public String toString() {
+		return "F:{v="+_value+", t="+_type+"}";
+	}
+
 	public edge_data get_edge() {
 		return _edge;
 	}

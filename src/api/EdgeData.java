@@ -3,7 +3,7 @@ package api;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-class EdgeData implements edge_data {
+public class EdgeData implements edge_data {
     @Expose
     @SerializedName("src")
     private int _src;
@@ -15,6 +15,12 @@ class EdgeData implements edge_data {
     private int _dest;
     private int _tag;
     private String _str;
+
+    public EdgeData() {
+        this._src = 0;
+        this._dest = 0;
+        this._weight = 0;
+    }
 
     public EdgeData(int src, int dest, double weight) {
         this._src = src;

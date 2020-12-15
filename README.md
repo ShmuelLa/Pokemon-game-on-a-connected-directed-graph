@@ -1,4 +1,4 @@
-![alt text](WikiPictures/redgraph2.gif)
+![alt text](resources/WikiPictures/redgraph2.gif)
 
 # :mortar_board: Weighted Directed Graph Java Implementation
 
@@ -103,7 +103,7 @@ of that in order to test complex algorithms like BFS and Dijkstra's.
 Implemented in `mainTestGraph()` and `mainTestGraphAlg()` accordingly
 
 ### Main Graph Built for Testing
-![alt text](WikiPictures/testgraph.jpg)
+![alt text](resources/WikiPictures/testgraph.jpg)
 
 ## :memo: External articles and links used in the making of this project  
   

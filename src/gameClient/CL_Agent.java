@@ -32,6 +32,7 @@ public class CL_Agent {
 			_id = -1;
 			setSpeed(0);
 		}
+
 		public void update(String json) {
 			JSONObject line;
 			try {
@@ -58,8 +59,12 @@ public class CL_Agent {
 				e.printStackTrace();
 			}
 		}
+
 		//@Override
-		public int getSrcNode() {return this._curr_node.getKey();}
+		public int getSrcNode() {
+			return this._curr_node.getKey();
+		}
+
 		public String toJSON() {
 			int d = this.getNextNode();
 			String ans = "{\"Agent\":{"
@@ -160,9 +165,11 @@ public class CL_Agent {
 		public edge_data get_curr_edge() {
 			return this._curr_edge;
 		}
+
 		public long get_sg_dt() {
 			return _sg_dt;
 		}
+
 		public void set_sg_dt(long _sg_dt) {
 			this._sg_dt = _sg_dt;
 		}

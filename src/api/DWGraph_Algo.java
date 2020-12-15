@@ -1,13 +1,7 @@
 package api;
 
 import com.google.gson.*;
-
 import java.io.*;
-
-import org.json.*;
-
-import javax.swing.*;
-import java.lang.reflect.Type;
 import java.util.*;
 
 public class DWGraph_Algo implements dw_graph_algorithms {
@@ -250,6 +244,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      * @return true - iff the graph was successfully loaded.
      */
     @Override
+    // TODO What we loaded here is the absolute minimum, we can/should load more data
     public boolean load(String file) {
         boolean flag = false;
         try {
@@ -299,5 +294,23 @@ public class DWGraph_Algo implements dw_graph_algorithms {
                 n.setInfo(null);
             }
         }
+    }
+
+    /**
+     * This method overrides the equals method from Object interface.
+     * It is used for graph comparing. Used vastly in testing and debugging.
+     * It uses the toString method which is override as well for this project.
+     *
+     * For more information and for the full doc:
+     * https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html
+     *
+     * @param obj the reference object with which to compare.
+     * @return boolean - if this object is the same as the obj
+     */
+    @Override
+    public boolean equals(Object obj) {
+        directed_weighted_graph g_obj = (DWGraph_DS) obj;
+        if (_algo_graph.edgeSize() != g_obj.edgeSize() || _algo_graph.nodeSize() != g_obj.nodeSize()) return false;
+        return Objects.equals(_algo_graph.toString(), g_obj.toString());
     }
 }
