@@ -3,20 +3,15 @@ import Server.Game_Server_Ex2;
 import api.*;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class Ex2 implements Runnable {
     private static MyFrame _win;
     private static Arena _ar;
 
     public static void main(String[] args) {
-        //BADtest1();
         Thread client = new Thread(new Ex2());
         client.start();
     }
@@ -38,57 +33,6 @@ public class Ex2 implements Runnable {
         return game_graph_algo.getGraph();
     }
 
-    public static void BADtest1() {
-        game_service game = Game_Server_Ex2.getServer(2); // you have [0,23] games
-        String graph = game.getGraph();
-        directed_weighted_graph getgraph = game.getJava_Graph_Not_to_be_used();
-        //game.login(12345);  // please use your ID only as a key. uncomment this will upload your results to the server
-        node_data nn = getgraph.getNode(10);
-        String info = game.toString();
-        System.out.println(info);
-        System.out.println(graph);
-        System.out.println(game.getPokemons());
-        int src_node = 0;  // arbitrary node, you should start at one of the fruits
-        game.addAgent(src_node);
-        game.startGame();
-        int i=0;
-        while(game.isRunning()) {
-            long t = game.timeToEnd();
-            String lg = game.move();
-            List<CL_Agent> log = Arena.getAgents(lg, getgraph);
-            for(int a=0;a< log.size();a++) {
-                CL_Agent r = log.get(a);
-                int dest = r.getNextNode();
-                int src = r.getSrcNode();
-                int id = r.getID();
-                if(dest==-1) {
-                    int new_dest = BADnextNode(getgraph, src);
-                    game.chooseNextEdge(id, new_dest);
-                    System.out.println(i+") "+a+") "+r+"  move to node: "+new_dest);
-                }
-            }
-            i++;
-        }
-    }
-
-    /**
-     * a very simple random walk implementation!
-     * @param g
-     * @param src
-     * @return
-     */
-    private static int BADnextNode(directed_weighted_graph g, int src) {
-        int ans = -1;
-        Collection<edge_data> ee = g.getE(src);
-        Iterator<edge_data> itr = ee.iterator();
-        int s = ee.size();
-        int r = (int)(Math.random()*s);
-        int i=0;
-        while(i<r) {itr.next();i++;}
-        ans = itr.next().getDest();
-        return ans;
-    }
-
     /**
      * When an object implementing interface {@code Runnable} is used
      * to create a thread, starting the thread causes the object's
@@ -102,19 +46,17 @@ public class Ex2 implements Runnable {
      */
     @Override
     public void run() {
-        Integer scenario = 0;
+        Integer scenario = 11;
         game_service game = Game_Server_Ex2.getServer(scenario);
         directed_weighted_graph game_graph = loadGraphJson(game.getGraph(),scenario.toString());
         String game_info = game.toString();
-        System.out.println(game_info);
-        System.out.println(game.getPokemons());
         init(game);
         game.startGame();
         _win.setTitle("Ex2 - OOP Test Num: "+scenario.toString()+" "+game.toString());
         int ind=0;
         long dt=100;
         while (game.isRunning()) {
-            moveAgents(game, game_graph);
+            moveAgents3(game, game_graph);
             try {
                 if(ind % 1==0) {
                     _win.repaint();
@@ -131,24 +73,110 @@ public class Ex2 implements Runnable {
         System.exit(0);
     }
 
+    public static void moveAgents2(game_service game, directed_weighted_graph graph_game) {
+        String agents_status = game.getAgents();
+        String pokemons_json =  game.getPokemons();
+        List<CL_Agent> agents_arr = Arena.getAgents(agents_status, graph_game);
+        List<CL_Pokemon> pokemons_arr = Arena.json2Pokemons(pokemons_json);
+        updateAllEdges(pokemons_arr, agents_arr, graph_game);
+        _ar.setAgents(agents_arr);
+        _ar.setPokemons(pokemons_arr);
+        for(int i=0; i<agents_arr.size(); i++) {
+            CL_Agent current_agent = agents_arr.get(i);
+            int dest = current_agent.getNextNode();
+            int src = current_agent.getSrcNode();
+            if(dest == -1) {
+                //CL_Pokemon closest = returnClosestPokemon(pokemons_arr,current_agent,graph_game);
+                dest = chooseNextNode(graph_game, src, pokemons_arr.get(i));
+                game.chooseNextEdge(current_agent.getID(), dest);
+                System.out.println("Agent: "+current_agent.getID()+", val: "+current_agent.getValue()+"   turned to node: "+dest);
+            }
+        }
+        game.move();
+    }
+
+    public static void moveAgents3(game_service game, directed_weighted_graph graph_game) {
+        String agents_status = game.getAgents();
+        String pokemons_json =  game.getPokemons();
+        List<CL_Agent> agents_arr = Arena.getAgents(agents_status, graph_game);
+        List<CL_Pokemon> pokemons_arr = Arena.json2Pokemons(pokemons_json);
+        updateAllEdges(pokemons_arr, agents_arr, graph_game);
+        _ar.setAgents(agents_arr);
+        _ar.setPokemons(pokemons_arr);
+        for(int i=0; i<agents_arr.size(); i++) {
+            CL_Agent current_agent = agents_arr.get(i);
+            int dest = current_agent.getNextNode();
+            int src = current_agent.getSrcNode();
+            if(dest == -1) {
+                CL_Pokemon closest = returnClosestPokemon(pokemons_arr,current_agent,graph_game);
+                if (closest.isTargeted()) {
+                    for (CL_Pokemon next_closest : returnClosestPokemonArr(pokemons_arr,current_agent,graph_game)) {
+                        if (!next_closest.isTargeted()) {
+                            next_closest.targetPokemon();
+                            dest = chooseNextNode(graph_game, src, next_closest);
+                            game.chooseNextEdge(current_agent.getID(),dest);
+                            System.out.println("Agent: "+current_agent.getID()+", val: "+current_agent.getValue()+"   turned to node: "+dest);
+                        }
+                    }
+                }
+                else {
+                    closest.targetPokemon();
+                    dest = chooseNextNode(graph_game, src, closest);
+                    game.chooseNextEdge(current_agent.getID(),dest);
+                    System.out.println("Agent: "+current_agent.getID()+", val: "+current_agent.getValue()+"   turned to node: "+dest);
+                }
+            }
+        }
+        game.move();
+    }
+
     public static void moveAgents(game_service game, directed_weighted_graph graph_game) {
         String agents_status = game.getAgents();
         String pokemons_json =  game.getPokemons();
         List<CL_Agent> agents_arr = Arena.getAgents(agents_status, graph_game);
         List<CL_Pokemon> pokemons_arr = Arena.json2Pokemons(pokemons_json);
+        resetTargeting(pokemons_arr);
+        updateAllEdges(pokemons_arr, agents_arr, graph_game);
         _ar.setAgents(agents_arr);
         _ar.setPokemons(pokemons_arr);
-        //ArrayList<OOP_Point3D> rs = new ArrayList<OOP_Point3D>();
-        for(int i=0; i<agents_arr.size(); i++) {
-            CL_Agent agent = agents_arr.get(i);
-            int id = agent.getID();
-            int dest = agent.getNextNode();
-            int src = agent.getSrcNode();
-            double v = agent.getValue();
+        for(int i=0; i < agents_arr.size(); i++) {
+            CL_Agent current_agent = agents_arr.get(i);
+            if (current_agent.getCurrentTarget() != null && current_agent.get_curr_edge() != null) {
+                if (current_agent.checkFormerTarget() == current_agent.getCurrentTarget()
+                        && current_agent.getCurrentTarget().get_edge() == current_agent.get_curr_edge()) {
+                    current_agent.getCurrentTarget().blacklist();
+                }
+            }
+            int dest = current_agent.getNextNode();
+            int src = current_agent.getSrcNode();
             if(dest == -1) {
-                dest = chooseNextNode(graph_game, src, pokemons_arr.get(i));
-                game.chooseNextEdge(agent.getID(), dest);
-                System.out.println("Agent: "+id+", val: "+v+"   turned to node: "+dest);
+                CL_Pokemon closest = returnClosestPokemon(pokemons_arr,current_agent,graph_game);
+                if (!closest.isTargeted() && !closest.checkIfBlacklisted()) {
+                    current_agent.setFormerTarget(current_agent.getCurrentTarget());
+                    dest = chooseNextNode(graph_game, src, closest);
+                    game.chooseNextEdge(current_agent.getID(), dest);
+                    current_agent.setCurrentTarget(closest);
+                    System.out.println("Agent: "+current_agent.getID()+", val: "+current_agent.getValue()+"   turned to node: "+dest);
+                }
+                else {
+                    for (CL_Pokemon pokemon : returnClosestPokemonArr(pokemons_arr,current_agent,graph_game)) {
+                        if (!pokemon.isTargeted() && !pokemon.checkIfBlacklisted()) {
+                            current_agent.setFormerTarget(current_agent.getCurrentTarget());
+                            dest = chooseNextNode(graph_game, src, pokemon);
+                            game.chooseNextEdge(current_agent.getID(), dest);
+                            current_agent.setCurrentTarget(pokemon);
+                            System.out.println("Agent: "+current_agent.getID()+", val: "+current_agent.getValue()+"   turned to node: "+dest);
+                            break;
+                        }
+                    }
+                }
+
+/*                if (agents_arr.get(i).getCurrentTarget() != pokemons_arr.get(i)) {
+                    agents_arr.get(i).setCurrentTarget(pokemons_arr.get(i));
+                    dest = chooseNextNode(graph_game, src, pokemons_arr.get(i));
+                    game.chooseNextEdge(agent.getID(), dest);
+                    System.out.println("Agent: "+agent.getID()+", val: "+v+"   turned to node: "+dest);
+                }*/
             }
         }
         game.move();
@@ -185,7 +213,6 @@ public class Ex2 implements Runnable {
             System.out.println(info);
             System.out.println(game.getPokemons());
             ArrayList<CL_Pokemon> pokemons_arr = Arena.json2Pokemons(game.getPokemons());
-            //int agent_src_node = Arena.getPokemonEdge(pokemons_arr.get(0),game_graph).getDest();;  // arbitrary node, you should start at one of the pokemon
             for(int i = 0; i < pokemons_arr.size(); i++) {
                 Arena.updateEdge(pokemons_arr.get(i),game_graph);
             }
@@ -201,6 +228,55 @@ public class Ex2 implements Runnable {
         }
         catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void updateAllEdges(List<CL_Pokemon> pokemons_arr,List<CL_Agent> agents_arr, directed_weighted_graph graph) {
+        for (CL_Pokemon pokemon : pokemons_arr) {
+            Arena.updateEdge(pokemon, graph);
+        }
+/*        for (CL_Agent agent : agents_arr) {
+            Arena.updateEdge(agent, graph);
+        }*/
+    }
+
+    public static CL_Pokemon returnClosestPokemon(List<CL_Pokemon> pokemons_arr, CL_Agent agent, directed_weighted_graph graph) {
+        dw_graph_algorithms graph_algo = new DWGraph_Algo();
+        graph_algo.init(graph);
+        double path_lengh;
+        HashMap<Double,CL_Pokemon> distance_map = new HashMap<>();
+        List<Double> distances = new ArrayList<>();
+        for (CL_Pokemon pokemon : pokemons_arr) {
+            path_lengh = graph_algo.shortestPathDist(agent.getSrcNode(),pokemon.get_edge().getDest());
+            distance_map.put(path_lengh,pokemon);
+            distances.add(path_lengh);
+        }
+        Collections.sort(distances);
+        return distance_map.get(distances.get(0));
+    }
+
+    public static List<CL_Pokemon> returnClosestPokemonArr(List<CL_Pokemon> pokemons_arr, CL_Agent agent, directed_weighted_graph graph) {
+        dw_graph_algorithms graph_algo = new DWGraph_Algo();
+        List<CL_Pokemon> result = new ArrayList<>();
+        graph_algo.init(graph);
+        double path_lengh;
+        HashMap<Double,CL_Pokemon> distance_map = new HashMap<>();
+        List<Double> distances = new ArrayList<>();
+        for (CL_Pokemon pokemon : pokemons_arr) {
+            path_lengh = graph_algo.shortestPathDist(agent.getSrcNode(),pokemon.get_edge().getDest());
+            distance_map.put(path_lengh,pokemon);
+            distances.add(path_lengh);
+        }
+        Collections.sort(distances);
+        for (int i=0; i<distances.size(); i++) {
+            result.add(distance_map.get(distances.get(i)));
+        }
+        return result;
+    }
+
+    public static void resetTargeting(List<CL_Pokemon> pokemons_arr) {
+        for (CL_Pokemon pokemon : pokemons_arr) {
+            pokemon.untargetPokemon();
         }
     }
 }

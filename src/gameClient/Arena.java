@@ -126,13 +126,8 @@ public class Arena {
 	}
 
 	public static void updateEdge(CL_Pokemon fr, directed_weighted_graph g) {
-		//	oop_edge_data ans = null;
-		Iterator<node_data> itr = g.getV().iterator();
-		while(itr.hasNext()) {
-			node_data v = itr.next();
-			Iterator<edge_data> iter = g.getE(v.getKey()).iterator();
-			while(iter.hasNext()) {
-				edge_data e = iter.next();
+		for (node_data n : g.getV()) {
+			for (edge_data e : g.getE(n.getKey())) {
 				boolean found = isOnEdge(fr.getLocation(), e,fr.getType(), g);
 				if(found) {
 					fr.set_edge(e);
@@ -141,8 +136,18 @@ public class Arena {
 		}
 	}
 
+/*	public static void updateEdge(CL_Agent fr, directed_weighted_graph g) {
+		for (node_data n : g.getV()) {
+			for (edge_data e : g.getE(n.getKey())) {
+				boolean found = isOnEdge(fr.getLocation(), e, g);
+				if(found) {
+					fr.setCurrentEdge(e);
+				}
+			}
+		}
+	}*/
+
 	public static edge_data getPokemonEdge(CL_Pokemon fr, directed_weighted_graph g) {
-		//	oop_edge_data ans = null;
 		Iterator<node_data> itr = g.getV().iterator();
 		edge_data result = new EdgeData();
 		while(itr.hasNext()) {
@@ -153,7 +158,7 @@ public class Arena {
 				boolean found = isOnEdge(fr.getLocation(), e,fr.getType(), g);
 				if(found) {
 					fr.set_edge(e);
-					result = e;
+					fr.set_edge(e);
 					return e;
 				}
 			}
@@ -161,25 +166,27 @@ public class Arena {
 		return result;
 	}
 
-	private static boolean isOnEdge(geo_location p, geo_location src, geo_location dest ) {
-		boolean ans = false;
-		double dist = src.distance(dest);
-		double d1 = src.distance(p) + p.distance(dest);
-		if(dist>d1-EPS2) {ans = true;}
-		return ans;
+	public static boolean isOnEdge(geo_location pos, edge_data edge, int type, directed_weighted_graph graph) {
+		int src = edge.getSrc();
+		int dest = edge.getDest();
+		if ((type < 0 && dest > src) || (type > 0 && src > dest)) {
+			return false;
+		}
+		geo_location src_pos = graph.getNode(src).getLocation();
+		geo_location dest_pos = graph.getNode(dest).getLocation();
+		double distance = src_pos.distance(dest_pos);
+		double d1 = src_pos.distance(pos) + pos.distance(dest_pos);
+		return distance > d1 - EPS;
 	}
 
-	private static boolean isOnEdge(geo_location p, int s, int d, directed_weighted_graph g) {
-		geo_location src = g.getNode(s).getLocation();
-		geo_location dest = g.getNode(d).getLocation();
-		return isOnEdge(p,src,dest);
-	}
-	private static boolean isOnEdge(geo_location p, edge_data e, int type, directed_weighted_graph g) {
-		int src = g.getNode(e.getSrc()).getKey();
-		int dest = g.getNode(e.getDest()).getKey();
-		if(type<0 && dest>src) {return false;}
-		if(type>0 && src>dest) {return false;}
-		return isOnEdge(p,src, dest, g);
+	public static boolean isOnEdge(geo_location pos, edge_data edge, directed_weighted_graph graph) {
+		int src = edge.getSrc();
+		int dest = edge.getDest();
+		geo_location src_pos = graph.getNode(src).getLocation();
+		geo_location dest_pos = graph.getNode(dest).getLocation();
+		double distance = src_pos.distance(dest_pos);
+		double d1 = src_pos.distance(pos) + pos.distance(dest_pos);
+		return distance > d1 - EPS;
 	}
 
 	private static Range2D GraphRange(directed_weighted_graph g) {
@@ -204,6 +211,7 @@ public class Arena {
 		Range yr = new Range(y0,y1);
 		return new Range2D(xr,yr);
 	}
+
 	public static Range2Range w2f(directed_weighted_graph g, Range2D frame) {
 		Range2D world = GraphRange(g);
 		Range2Range ans = new Range2Range(world, frame);

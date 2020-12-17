@@ -1,10 +1,13 @@
 package gameClient;
+import api.EdgeData;
+import api.directed_weighted_graph;
 import api.edge_data;
+import api.node_data;
 import com.google.gson.*;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
-
 import java.io.FileReader;
+import java.util.Iterator;
 
 public class CL_Pokemon {
 	private edge_data _edge;
@@ -13,32 +16,18 @@ public class CL_Pokemon {
 	private Point3D _pos;
 	private double min_dist;
 	private int min_ro;
+	private boolean _isTargeted = false;
+	private boolean _isBlackListed = false;
 	
 	public CL_Pokemon(Point3D p, int t, double v, double s, edge_data e) {
-		_type = t;
-	//	_speed = s;
-		_value = v;
-		set_edge(e);
-		_pos = p;
-		min_dist = -1;
-		min_ro = -1;
+		this._type = t;
+		this._value = v;
+		this._edge = e;
+		this._pos = p;
+		this.min_dist = -1;
+		this.min_ro = -1;
+		this._isTargeted = false;
 	}
-
-/*	public CL_Pokemon(JsonElement json) {
-		JsonElement jsonElement = JsonParser.parseReader(json);
-		JsonObject file_object = file_element.getAsJsonObject();
-		JsonArray edges_arr = file_object.get("Edges").getAsJsonArray();
-		JsonArray nodes_arr = file_object.get("Nodes").getAsJsonArray();
-		Gson gson = new Gson();
-		gson.toJson(json);
-		_type = gson.
-		//	_speed = s;
-		_value = v;
-		set_edge(e);
-		_pos = p;
-		min_dist = -1;
-		min_ro = -1;
-	}*/
 
 	public static CL_Pokemon init_from_json(String json) {
 		CL_Pokemon ans = null;
@@ -67,9 +56,16 @@ public class CL_Pokemon {
 	public Point3D getLocation() {
 		return _pos;
 	}
-	public int getType() {return _type;}
+
+	public int getType() {
+		return _type;
+	}
+
 //	public double getSpeed() {return _speed;}
-	public double getValue() {return _value;}
+
+	public double getValue() {
+		return _value;
+	}
 
 	public double getMin_dist() {
 		return min_dist;
@@ -85,5 +81,45 @@ public class CL_Pokemon {
 
 	public void setMin_ro(int min_ro) {
 		this.min_ro = min_ro;
+	}
+
+	public edge_data searchPokemonEdge(CL_Pokemon fr, directed_weighted_graph g) {
+		//	oop_edge_data ans = null;
+		Iterator<node_data> itr = g.getV().iterator();
+		edge_data result = new EdgeData();
+		while(itr.hasNext()) {
+			node_data v = itr.next();
+			Iterator<edge_data> iter = g.getE(v.getKey()).iterator();
+			while(iter.hasNext()) {
+				edge_data e = iter.next();
+				boolean found = Arena.isOnEdge(this._pos, e,fr.getType(), g);
+				if(found) {
+					fr.set_edge(e);
+					result = e;
+					return e;
+				}
+			}
+		}
+		return result;
+	}
+
+	public void targetPokemon() {
+		this._isTargeted = true;
+	}
+
+	public void untargetPokemon() {
+		this._isTargeted = false;
+	}
+
+	public boolean isTargeted() {
+		return this._isTargeted;
+	}
+
+	public void blacklist() {
+		this._isBlackListed = true;
+	}
+
+	public boolean checkIfBlacklisted() {
+		return this._isBlackListed;
 	}
 }

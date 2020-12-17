@@ -4,23 +4,22 @@ import api.directed_weighted_graph;
 import api.edge_data;
 import api.geo_location;
 import api.node_data;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
 
 public class CL_Agent {
 		public static final double EPS = 0.0001;
-		private static int _count = 0;
-		private static int _seed = 3331;
 		private int _id;
-	//	private long _key;
 		private geo_location _pos;
 		private double _speed;
 		private edge_data _curr_edge;
 		private node_data _curr_node;
 		private directed_weighted_graph _gg;
-		private CL_Pokemon _curr_fruit;
+		private CL_Pokemon _current_target;
+		private CL_Pokemon _former_target;
 		private long _sg_dt;
-		
 		private double _value;
 		
 		
@@ -34,9 +33,14 @@ public class CL_Agent {
 		}
 
 		public void update(String json) {
+			//{"Agent":{"src":39,"pos":"35.20192230347054,32.10710793781513,0.0","id":2,"dest":15,"value":13,"speed":1}}
+/*			JsonObject json_obj = JsonParser.parseString(json).getAsJsonObject();
+			this._id = json_obj.getAsJsonObject("Agent").get("id").getAsInt();
+			this._value = json_obj.getAsJsonObject("Agent").get("value").getAsInt();
+			this._value = json_obj.getAsJsonObject("Agent").get("value").getAsInt();*/
+
 			JSONObject line;
 			try {
-				// "GameServer":{"graph":"A0","pokemons":3,"agents":1}}
 				line = new JSONObject(json);
 				JSONObject ttt = line.getJSONObject("Agent");
 				int id = ttt.getInt("id");
@@ -78,31 +82,33 @@ public class CL_Agent {
 					+ "}";
 			return ans;	
 		}
-		private void setMoney(double v) {_value = v;}
+
+		private void setMoney(double v) {
+			this._value = v;
+		}
 	
-		public boolean setNextNode(int dest) {
-			boolean ans = false;
+		public void setNextNode(int dest) {
 			int src = this._curr_node.getKey();
 			this._curr_edge = _gg.getEdge(src, dest);
-			if(_curr_edge!=null) {
-				ans=true;
-			}
-			else {_curr_edge = null;}
-			return ans;
 		}
+
 		public void setCurrNode(int src) {
 			this._curr_node = _gg.getNode(src);
 		}
+
 		public boolean isMoving() {
 			return this._curr_edge!=null;
 		}
+
 		public String toString() {
 			return toJSON();
 		}
+
 		public String toString1() {
 			String ans=""+this.getID()+","+_pos+", "+isMoving()+","+this.getValue();	
 			return ans;
 		}
+
 		public int getID() {
 			// TODO Auto-generated method stub
 			return this._id;
@@ -118,8 +124,6 @@ public class CL_Agent {
 			// TODO Auto-generated method stub
 			return this._value;
 		}
-
-
 
 		public int getNextNode() {
 			int ans = -2;
@@ -138,12 +142,15 @@ public class CL_Agent {
 		public void setSpeed(double v) {
 			this._speed = v;
 		}
-		public CL_Pokemon get_curr_fruit() {
-			return _curr_fruit;
+
+		public CL_Pokemon getCurrentTarget () {
+			return this._current_target;
 		}
-		public void set_curr_fruit(CL_Pokemon curr_fruit) {
-			this._curr_fruit = curr_fruit;
+
+		public void setCurrentTarget (CL_Pokemon curr_fruit) {
+			this._current_target = curr_fruit;
 		}
+
 		public void set_SDT(long ddtt) {
 			long ddt = ddtt;
 			if(this._curr_edge!=null) {
@@ -152,8 +159,8 @@ public class CL_Agent {
 				geo_location src = _gg.getNode(get_curr_edge().getSrc()).getLocation();
 				double de = src.distance(dest);
 				double dist = _pos.distance(dest);
-				if(this.get_curr_fruit().get_edge()==this.get_curr_edge()) {
-					 dist = _curr_fruit.getLocation().distance(this._pos);
+				if(this.getCurrentTarget().get_edge()==this.get_curr_edge()) {
+					 dist = _current_target.getLocation().distance(this._pos);
 				}
 				double norm = dist/de;
 				double dt = w*norm / this.getSpeed(); 
@@ -166,11 +173,23 @@ public class CL_Agent {
 			return this._curr_edge;
 		}
 
+/*		public void setCurrentEdge(edge_data edge) {
+			this._curr_edge = edge;
+		}*/
+
 		public long get_sg_dt() {
 			return _sg_dt;
 		}
 
 		public void set_sg_dt(long _sg_dt) {
 			this._sg_dt = _sg_dt;
+		}
+
+		public void setFormerTarget(CL_Pokemon pokemon) {
+			this._former_target = pokemon;
+		}
+
+		public CL_Pokemon checkFormerTarget() {
+			return this._former_target;
 		}
 	}
