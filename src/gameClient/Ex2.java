@@ -65,7 +65,6 @@ public class Ex2 implements Runnable {
         _win.setSize(1200, 900);
         _win.update(_ar);
         _win.show();
-        _ar.updatePokemonEdges();
         placeAgents(game);
         _ar.updateArena(game);
     }
@@ -74,7 +73,7 @@ public class Ex2 implements Runnable {
         _ar.updateArena(game);
         List<CL_Agent> agents_arr = _ar.getAgents();
         List<CL_Pokemon> pokemons_arr = _ar.getPokemons();
-        updateAllEdges(pokemons_arr, agents_arr, graph_game);
+        updateAllEdges(pokemons_arr, graph_game);
         resetTargeting(pokemons_arr);
         for(int i=0; i<agents_arr.size(); i++) {
             CL_Agent current_agent = agents_arr.get(i);
@@ -122,7 +121,7 @@ public class Ex2 implements Runnable {
         String pokemons_json =  game.getPokemons();
         List<CL_Agent> agents_arr = Arena.getAgents(agents_status, graph_game);
         List<CL_Pokemon> pokemons_arr = Arena.json2Pokemons(pokemons_json);
-        updateAllEdges(pokemons_arr, agents_arr, graph_game);
+        updateAllEdges(pokemons_arr, graph_game);
         _ar.setAgents(agents_arr);
         _ar.setPokemons(pokemons_arr);
         for(int i=0; i<agents_arr.size(); i++) {
@@ -138,13 +137,10 @@ public class Ex2 implements Runnable {
         }
     }
 
-    public synchronized static void updateAllEdges(List<CL_Pokemon> pokemons_arr,List<CL_Agent> agents_arr, directed_weighted_graph graph) {
+    public synchronized static void updateAllEdges(List<CL_Pokemon> pokemons_arr, directed_weighted_graph graph) {
         for (CL_Pokemon pokemon : pokemons_arr) {
             Arena.updateEdge(pokemon, graph);
         }
-/*        for (CL_Agent agent : agents_arr) {
-            Arena.updateEdge(agent, graph);
-        }*/
     }
 
     public synchronized static CL_Pokemon returnClosestPokemon(List<CL_Pokemon> pokemons_arr, CL_Agent agent, directed_weighted_graph graph) {
@@ -162,11 +158,13 @@ public class Ex2 implements Runnable {
         return distance_map.get(distances.get(0));
     }
 
-    public void placeAgents(game_service game) {
+    public static void placeAgents(game_service game) {
         PriorityQueue<CL_Pokemon> pokemon_value_queue = new PriorityQueue<>(new Comparator<>() {
             @Override
             public int compare(CL_Pokemon poke1, CL_Pokemon poke2) {
-                return Double.compare(poke1.getValue(), poke2.getValue());
+                if (poke1.getValue() > poke2.getValue()) return -1;
+                else if (poke1.getValue() < poke2.getValue()) return 1;
+                else return 0;
             }
         });
         pokemon_value_queue.addAll(_ar.getPokemons());
