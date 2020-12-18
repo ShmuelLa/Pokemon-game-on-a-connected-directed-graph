@@ -28,18 +28,6 @@ public class CL_Pokemon {
 		this._isTargeted = false;
 	}
 
-	public static CL_Pokemon init_from_json(String json) {
-		CL_Pokemon ans = null;
-		try {
-			JSONObject p = new JSONObject(json);
-			int id = p.getInt("game.getPokemons()");
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-		return ans;
-	}
-
 	public String toString() {
 		return "F:{v="+_value+", t="+_type+"}";
 	}
@@ -59,8 +47,6 @@ public class CL_Pokemon {
 	public int getType() {
 		return _type;
 	}
-
-//	public double getSpeed() {return _speed;}
 
 	public double getValue() {
 		return _value;

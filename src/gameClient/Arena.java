@@ -129,7 +129,7 @@ public class Arena {
 		return _agents;
 	}
 
-	public static List<CL_Agent> getAgents(String aa, directed_weighted_graph gg) {
+/*	public static List<CL_Agent> getAgents(String aa, directed_weighted_graph gg) {
 		ArrayList<CL_Agent> ans = new ArrayList<CL_Agent>();
 		try {
 			JSONObject ttt = new JSONObject(aa);
@@ -143,7 +143,7 @@ public class Arena {
 			e.printStackTrace();
 		}
 		return ans;
-	}
+	}*/
 
 	public static ArrayList<CL_Agent> json2Agents(String json) {
 		ArrayList<CL_Agent> result = new ArrayList<>();

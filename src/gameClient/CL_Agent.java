@@ -19,22 +19,13 @@ public class CL_Agent {
 		private double _speed;
 		private edge_data _curr_edge;
 		private node_data _curr_node;
+		private double _former_value;
 		private directed_weighted_graph _gg;
 		private CL_Pokemon _current_target;
 		private CL_Pokemon _former_target;
 		private long _sg_dt;
 		private double _value;
 		private HashSet<Integer> _targetArea;
-		
-		
-		public CL_Agent(directed_weighted_graph g, int start_node) {
-			_gg = g;
-			setMoney(0);
-			this._curr_node = _gg.getNode(start_node);
-			_pos = _curr_node.getLocation();
-			_id = -1;
-			setSpeed(0);
-		}
 
 		public CL_Agent(JsonObject json) {
 			_id = json.getAsJsonObject("Agent").get("id").getAsInt();
@@ -197,5 +188,13 @@ public class CL_Agent {
 
 		public HashSet<Integer> getTargetedArea() {
 			return this._targetArea;
+		}
+
+		public void setFormerValue(double value) {
+			this._former_value = value;
+		}
+
+		public double getFormerValue() {
+			return this._former_value;
 		}
 	}

@@ -12,6 +12,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GameTest {
 
@@ -129,11 +130,61 @@ class GameTest {
             }
         });
         pokemon_value_queue.addAll(pokemon_list);
-        assertEquals(13.0,pokemon_value_queue.poll().getValue());
-        assertEquals(12.0,pokemon_value_queue.poll().getValue());
+        System.out.println(game.getAgents());
+        ArrayList<Integer> agents_sources = new ArrayList<>();
+        JsonObject agents_obj = JsonParser.parseString(game.getAgents()).getAsJsonObject();
+        JsonArray J_obj = agents_obj.getAsJsonArray("Agents");
+        for (JsonElement gson : J_obj) {
+            JsonObject json_agent = gson.getAsJsonObject();
+            agents_sources.add(json_agent.getAsJsonObject("Agent").get("src").getAsInt());
+        }
+        CL_Pokemon tmp_pok = pokemon_value_queue.poll();
+        assertEquals(13.0,tmp_pok.getValue());
+        assertEquals(tmp_pok.get_edge().getSrc(),agents_sources.get(0));
+        tmp_pok = pokemon_value_queue.poll();
+        assertEquals(12.0,tmp_pok.getValue());
         assertEquals(9.0,pokemon_value_queue.poll().getValue());
         assertEquals(8.0,pokemon_value_queue.poll().getValue());
         assertEquals(5.0,pokemon_value_queue.poll().getValue());
         assertEquals(5.0,pokemon_value_queue.poll().getValue());
+    }
+
+    @Test
+    void pokemonTargeting() {
+        game_service game = Game_Server_Ex2.getServer(11);
+        ArrayList<CL_Pokemon> pokemon_list = json2Pokemons(game.getPokemons());
+        for (CL_Pokemon pokemon : pokemon_list) {
+            assertFalse(pokemon.isTargeted());
+        }
+        for (CL_Pokemon pokemon : pokemon_list) {
+            pokemon.targetPokemon();
+            assertTrue(pokemon.isTargeted());
+        }
+        Ex2.resetTargeting(pokemon_list);
+        for (CL_Pokemon pokemon : pokemon_list) {
+            assertFalse(pokemon.isTargeted());
+        }
+    }
+
+    @Test
+    void agentTargeting() {
+        game_service game = Game_Server_Ex2.getServer(11);
+        directed_weighted_graph graph = parseGraph(game.getGraph());
+        ArrayList<CL_Pokemon> pokemon_list = json2Pokemons(game.getPokemons());
+        System.out.println(game.getAgents());
+        for (CL_Pokemon pokemon : pokemon_list) {
+            Arena.updateEdge(pokemon, graph);
+        }
+        placeAgents(game,pokemon_list,graph);
+        System.out.println(game.getAgents());
+        PriorityQueue<CL_Pokemon> pokemon_value_queue = new PriorityQueue<>(new Comparator<>() {
+            @Override
+            public int compare(CL_Pokemon poke1, CL_Pokemon poke2) {
+                if (poke1.getValue() > poke2.getValue()) return -1;
+                else if (poke1.getValue() < poke2.getValue()) return 1;
+                else return 0;
+            }
+        });
+        pokemon_value_queue.addAll(pokemon_list);
     }
 }
