@@ -4,13 +4,16 @@ import api.directed_weighted_graph;
 import api.edge_data;
 import api.geo_location;
 import api.node_data;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
 
+import java.util.HashSet;
+
 public class CL_Agent {
-		public static final double EPS = 0.0001;
 		private int _id;
 		private geo_location _pos;
 		private double _speed;
@@ -21,6 +24,7 @@ public class CL_Agent {
 		private CL_Pokemon _former_target;
 		private long _sg_dt;
 		private double _value;
+		private HashSet<Integer> _targetArea;
 		
 		
 		public CL_Agent(directed_weighted_graph g, int start_node) {
@@ -32,13 +36,16 @@ public class CL_Agent {
 			setSpeed(0);
 		}
 
-		public void update(String json) {
-			//{"Agent":{"src":39,"pos":"35.20192230347054,32.10710793781513,0.0","id":2,"dest":15,"value":13,"speed":1}}
-/*			JsonObject json_obj = JsonParser.parseString(json).getAsJsonObject();
-			this._id = json_obj.getAsJsonObject("Agent").get("id").getAsInt();
-			this._value = json_obj.getAsJsonObject("Agent").get("value").getAsInt();
-			this._value = json_obj.getAsJsonObject("Agent").get("value").getAsInt();*/
+		public CL_Agent(JsonObject json) {
+			_id = json.getAsJsonObject("Agent").get("id").getAsInt();
+			_value = json.getAsJsonObject("Agent").get("value").getAsDouble();
+			_speed = json.getAsJsonObject("Agent").get("speed").getAsDouble();
+			_pos = new Point3D(json.getAsJsonObject("Agent").get("pos").getAsString());
+			_curr_node = Ex2._game_graph.getNode(json.getAsJsonObject("Agent").get("src").getAsInt());
+			_curr_edge = Ex2._game_graph.getEdge(_curr_node.getKey(), json.getAsJsonObject("Agent").get("dest").getAsInt());
+		}
 
+		public void update(String json) {
 			JSONObject line;
 			try {
 				line = new JSONObject(json);
@@ -64,7 +71,6 @@ public class CL_Agent {
 			}
 		}
 
-		//@Override
 		public int getSrcNode() {
 			return this._curr_node.getKey();
 		}
@@ -101,27 +107,19 @@ public class CL_Agent {
 		}
 
 		public String toString() {
-			return toJSON();
-		}
-
-		public String toString1() {
-			String ans=""+this.getID()+","+_pos+", "+isMoving()+","+this.getValue();	
-			return ans;
+			return "Agent: "+this.getID()+" Val: "+this.getValue()+", "+_pos+", "+isMoving()+", ";
 		}
 
 		public int getID() {
-			// TODO Auto-generated method stub
 			return this._id;
 		}
 	
 		public geo_location getLocation() {
-			// TODO Auto-generated method stub
 			return _pos;
 		}
 
 		
 		public double getValue() {
-			// TODO Auto-generated method stub
 			return this._value;
 		}
 
@@ -173,9 +171,9 @@ public class CL_Agent {
 			return this._curr_edge;
 		}
 
-/*		public void setCurrentEdge(edge_data edge) {
+		public void setCurrentEdge(edge_data edge) {
 			this._curr_edge = edge;
-		}*/
+		}
 
 		public long get_sg_dt() {
 			return _sg_dt;
@@ -191,5 +189,13 @@ public class CL_Agent {
 
 		public CL_Pokemon checkFormerTarget() {
 			return this._former_target;
+		}
+
+		public void setTargetedArea(HashSet<Integer> area) {
+			this._targetArea = area;
+		}
+
+		public HashSet<Integer> getTargetedArea() {
+			return this._targetArea;
 		}
 	}

@@ -3,7 +3,7 @@ package api;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-class NodeData implements node_data, Comparable<node_data> {
+public class NodeData implements node_data, Comparable<node_data> {
     @Expose
     @SerializedName("pos")
     private geo_location _location;
