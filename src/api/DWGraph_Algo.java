@@ -249,7 +249,6 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         boolean flag = false;
         try {
             File fi = new File(file);
-            Scanner sc = new Scanner(fi);
             directed_weighted_graph result = new DWGraph_DS();
             JsonElement file_element = JsonParser.parseReader(new FileReader(fi));
             JsonObject file_object = file_element.getAsJsonObject();

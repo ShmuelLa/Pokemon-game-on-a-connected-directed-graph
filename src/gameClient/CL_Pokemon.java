@@ -1,12 +1,11 @@
 package gameClient;
+
 import api.EdgeData;
 import api.directed_weighted_graph;
 import api.edge_data;
 import api.node_data;
-import com.google.gson.*;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
-import java.io.FileReader;
 import java.util.Iterator;
 
 public class CL_Pokemon {
