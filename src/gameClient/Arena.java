@@ -155,6 +155,20 @@ public class Arena {
 		}
 	}
 
+/*	public void updatePokemonsFromJson(String json) {
+		JsonObject agents_obj = JsonParser.parseString(json).getAsJsonObject();
+		JsonArray J_obj = agents_obj.getAsJsonArray("Pokemons");
+		for (CL_Pokemon pokemon : this._pokemons) {
+			for (JsonElement json_agent : J_obj) {
+				JsonObject json_agent_obj = json_agent.getAsJsonObject();
+				if (json_agent_obj.getAsJsonObject("Pokemon").get("id").getAsInt() == agent.getID()) {
+					pokemon.update(json_agent_obj);
+				}
+			}
+			agent.setCurrentEdge(this._graph.getEdge(agent.getSrcNode(),agent.getNextNode()));
+		}
+	}*/
+
 	public static ArrayList<CL_Pokemon> initPokemonsFromJson(String json) {
 		ArrayList<CL_Pokemon> result = new ArrayList<>();
 		JsonObject pokemons_obj = JsonParser.parseString(json).getAsJsonObject();
