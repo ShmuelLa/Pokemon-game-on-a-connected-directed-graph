@@ -15,12 +15,12 @@ import java.util.HashSet;
 
 public class CL_Agent {
 		private int _id;
-		private geo_location _pos;
+		private geo_location _location;
 		private double _speed;
 		private edge_data _curr_edge;
 		private node_data _curr_node;
 		private double _former_value;
-		private directed_weighted_graph _gg;
+		private directed_weighted_graph _graph;
 		private CL_Pokemon _current_target;
 		private CL_Pokemon _former_target;
 		private long _sg_dt;
@@ -28,38 +28,23 @@ public class CL_Agent {
 		private HashSet<Integer> _targetArea;
 
 		public CL_Agent(JsonObject json) {
-			_id = json.getAsJsonObject("Agent").get("id").getAsInt();
-			_value = json.getAsJsonObject("Agent").get("value").getAsDouble();
-			_speed = json.getAsJsonObject("Agent").get("speed").getAsDouble();
-			_pos = new Point3D(json.getAsJsonObject("Agent").get("pos").getAsString());
-			_curr_node = Ex2._game_graph.getNode(json.getAsJsonObject("Agent").get("src").getAsInt());
-			_curr_edge = Ex2._game_graph.getEdge(_curr_node.getKey(), json.getAsJsonObject("Agent").get("dest").getAsInt());
+			this._id = json.getAsJsonObject("Agent").get("id").getAsInt();
+			this._value = json.getAsJsonObject("Agent").get("value").getAsDouble();
+			this._speed = json.getAsJsonObject("Agent").get("speed").getAsDouble();
+			this._location = new Point3D(json.getAsJsonObject("Agent").get("pos").getAsString());
+			this._graph = Ex2._game_graph;
+			this._curr_node = Ex2._game_graph.getNode(json.getAsJsonObject("Agent").get("src").getAsInt());
+			this._curr_edge = Ex2._game_graph.getEdge(_curr_node.getKey(), json.getAsJsonObject("Agent").get("dest").getAsInt());
 		}
 
-		public void update(String json) {
-			JSONObject line;
-			try {
-				line = new JSONObject(json);
-				JSONObject ttt = line.getJSONObject("Agent");
-				int id = ttt.getInt("id");
-				if(id==this.getID() || this.getID() == -1) {
-					if(this.getID() == -1) {_id = id;}
-					double speed = ttt.getDouble("speed");
-					String p = ttt.getString("pos");
-					Point3D pp = new Point3D(p);
-					int src = ttt.getInt("src");
-					int dest = ttt.getInt("dest");
-					double value = ttt.getDouble("value");
-					this._pos = pp;
-					this.setCurrNode(src);
-					this.setSpeed(speed);
-					this.setNextNode(dest);
-					this.setMoney(value);
-				}
-			}
-			catch(Exception e) {
-				e.printStackTrace();
-			}
+		public void update(JsonObject json) {
+			this._id = json.getAsJsonObject("Agent").get("id").getAsInt();
+			this._value = json.getAsJsonObject("Agent").get("value").getAsDouble();
+			this._speed = json.getAsJsonObject("Agent").get("speed").getAsDouble();
+			this._location = new Point3D(json.getAsJsonObject("Agent").get("pos").getAsString());
+			this._graph = Ex2._game_graph;
+			this._curr_node = Ex2._game_graph.getNode(json.getAsJsonObject("Agent").get("src").getAsInt());
+			this._curr_edge = Ex2._game_graph.getEdge(_curr_node.getKey(), json.getAsJsonObject("Agent").get("dest").getAsInt());
 		}
 
 		public int getSrcNode() {
@@ -74,23 +59,23 @@ public class CL_Agent {
 					+ "\"src\":"+this._curr_node.getKey()+","
 					+ "\"dest\":"+d+","
 					+ "\"speed\":"+this.getSpeed()+","
-					+ "\"pos\":\""+_pos.toString()+"\""
+					+ "\"pos\":\""+_location.toString()+"\""
 					+ "}"
 					+ "}";
 			return ans;	
 		}
 
-		private void setMoney(double v) {
+		public void setValue(double v) {
 			this._value = v;
 		}
 	
 		public void setNextNode(int dest) {
 			int src = this._curr_node.getKey();
-			this._curr_edge = _gg.getEdge(src, dest);
+			this._curr_edge = _graph.getEdge(src, dest);
 		}
 
 		public void setCurrNode(int src) {
-			this._curr_node = _gg.getNode(src);
+			this._curr_node = _graph.getNode(src);
 		}
 
 		public boolean isMoving() {
@@ -98,7 +83,7 @@ public class CL_Agent {
 		}
 
 		public String toString() {
-			return "Agent: "+this.getID()+" Val: "+this.getValue()+", "+_pos+", "+isMoving()+", ";
+			return "ID: "+this.getID()+" Val: "+this.getValue()+", "+_location+", "+isMoving()+", ";
 		}
 
 		public int getID() {
@@ -106,7 +91,7 @@ public class CL_Agent {
 		}
 	
 		public geo_location getLocation() {
-			return _pos;
+			return _location;
 		}
 
 		
@@ -144,12 +129,12 @@ public class CL_Agent {
 			long ddt = ddtt;
 			if(this._curr_edge!=null) {
 				double w = get_curr_edge().getWeight();
-				geo_location dest = _gg.getNode(get_curr_edge().getDest()).getLocation();
-				geo_location src = _gg.getNode(get_curr_edge().getSrc()).getLocation();
+				geo_location dest = _graph.getNode(get_curr_edge().getDest()).getLocation();
+				geo_location src = _graph.getNode(get_curr_edge().getSrc()).getLocation();
 				double de = src.distance(dest);
-				double dist = _pos.distance(dest);
+				double dist = _location.distance(dest);
 				if(this.getCurrentTarget().get_edge()==this.get_curr_edge()) {
-					 dist = _current_target.getLocation().distance(this._pos);
+					 dist = _current_target.getLocation().distance(this._location);
 				}
 				double norm = dist/de;
 				double dt = w*norm / this.getSpeed(); 
@@ -196,5 +181,9 @@ public class CL_Agent {
 
 		public double getFormerValue() {
 			return this._former_value;
+		}
+
+		public void setLocation(Point3D location) {
+			this._location = location;
 		}
 	}
