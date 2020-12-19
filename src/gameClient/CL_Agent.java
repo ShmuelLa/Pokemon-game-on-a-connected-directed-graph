@@ -36,6 +36,22 @@ public class CL_Agent {
 			this._curr_node = Ex2._game_graph.getNode(json.getAsJsonObject("Agent").get("src").getAsInt());
 			this._curr_edge = Ex2._game_graph.getEdge(_curr_node.getKey(), json.getAsJsonObject("Agent").get("dest").getAsInt());
 		}
+		public CL_Agent(JsonObject json, directed_weighted_graph graph) {
+			this._id = json.getAsJsonObject("Agent").get("id").getAsInt();
+			this._value = json.getAsJsonObject("Agent").get("value").getAsDouble();
+			this._speed = json.getAsJsonObject("Agent").get("speed").getAsDouble();
+			this._location = new Point3D(json.getAsJsonObject("Agent").get("pos").getAsString());
+			this._graph = graph;
+			this._curr_node = graph.getNode(json.getAsJsonObject("Agent").get("src").getAsInt());
+			this._curr_edge = graph.getEdge(_curr_node.getKey(), json.getAsJsonObject("Agent").get("dest").getAsInt());
+		}
+
+	public CL_Agent(int id, int val, int src, directed_weighted_graph graph) {
+		this._id = id;
+		this._value = val;
+		this._graph = graph;
+		this._curr_node = graph.getNode(src);
+	}
 
 		public void update(JsonObject json) {
 			this._id = json.getAsJsonObject("Agent").get("id").getAsInt();

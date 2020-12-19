@@ -19,6 +19,18 @@ public class CL_Pokemon {
 		this._location = new Point3D(json.getAsJsonObject("Pokemon").get("pos").getAsString());
 	}
 
+	/**
+	 *
+	 * @param val
+	 * @param type
+	 * @param pos
+	 */
+	public CL_Pokemon(int val, int type, Point3D pos) {
+		this._value = val;
+		this._type = type;
+		this._location = pos;
+	}
+
 	public edge_data get_edge() {
 		return _edge;
 	}
