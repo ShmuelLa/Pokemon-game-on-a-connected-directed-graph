@@ -4,11 +4,20 @@ import Server.Game_Server_Ex2;
 import api.*;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import gameClient.util.Gframe;
+import gameClient.util.myMusic;
+
+import javax.swing.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
+
 public class Ex2 implements Runnable {
+    private static Gframe gframe;
+    private int scenario;
+
     private static MyFrame _win;
     private static Arena _ar;
     public static long _sleep_time = 20;
@@ -32,20 +41,37 @@ public class Ex2 implements Runnable {
      */
     @Override
     public void run() {
-        Integer scenario = 11;
-        game_service game = Game_Server_Ex2.getServer(scenario);
+        gframe = new Gframe();
+        gframe.setSize(800, 600);
+        gframe.setResizable(true);
+        gframe.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        gframe.initMain();
+        gframe.show();
+        long fps = 2;
+        while(!gframe.getPressed()) {
+            try {
+                gframe.repaint();
+                Thread.sleep(fps);
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+        myMusic song2 = new myMusic(2);
+        this.scenario = Integer.parseInt(gframe.getJTextString());
+        game_service game = Game_Server_Ex2.getServer(this.scenario);
         init(game);
         setAgentsTargetedArea(_ar.getAgents(),_ar.getGraph());
         game.startGame();
         int ind = 0;
-        _win.setTitle("Ex2 - OOP Test Num: "+scenario.toString()+" "+game.toString());
+        gframe.setTitle("Pokemon Game - Scenario number: "+scenario);
         while (game.isRunning()) {
             moveAgents(game);
             game.move();
             try {
                 if(ind % 1==0) {
                     Thread.sleep(_sleep_time);
-                    _win.repaint();
+                    gframe.repaint();
                     ind++;
                 }
             }
@@ -61,10 +87,10 @@ public class Ex2 implements Runnable {
         this._game_graph = Arena.parseGraph(game.getGraph());
         _ar = new Arena(game);
         placeAgents(game);
-        _win = new MyFrame("test Ex2");
-        _win.setSize(1200, 900);
-        _win.update(_ar);
-        _win.show();
+        gframe = new Gframe();
+        gframe.setSize(800, 600);
+        gframe.updategame(_ar);
+        gframe.show();
         _ar.updateArena(game);
     }
 
