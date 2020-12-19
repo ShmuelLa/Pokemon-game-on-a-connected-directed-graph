@@ -14,5 +14,7 @@
     <orderEntry type="library" name="gson-2.8.6" level="project" />
     <orderEntry type="library" name="libs" level="project" />
     <orderEntry type="library" name="annotations-13.0" level="project" />
+    <orderEntry type="library" name="gson-2.8.61" level="project" />
+    <orderEntry type="library" name="Ex2_Server_v0.131" level="project" />
   </component>
 </module>

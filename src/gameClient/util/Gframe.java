@@ -21,7 +21,6 @@ import java.io.File;
 public class Gframe extends JFrame implements MouseListener{
     private Arena _ar;
     private gameClient.util.Range2Range _w2f;
-    private compAdapt compAdapt;
     private String level;
     private boolean pressed = false;
     private JButton button;
@@ -29,8 +28,8 @@ public class Gframe extends JFrame implements MouseListener{
     private myAction actionLis;
     private GPanel main;
     private BufferedImage ball;
-    private float reScaleX;
-    private float reScaleY;
+    private float reScaleX = 1;
+    private float reScaleY = 1;
 
 
 
@@ -42,55 +41,57 @@ public class Gframe extends JFrame implements MouseListener{
         updateFrame();
     }
     private void updateFrame() {
-        Range rx = new Range(20,this.getWidth()-50);
-        Range ry = new Range(this.getHeight()-120,50);
+        int rx_x = 20;
+        int rx_y = this.getWidth()-50;
+        int ry_x = this.getHeight()-120;
+        int ry_y = 50;
+        System.out.println(reScaleX);
+        Range rx = new Range((int)(rx_x*reScaleX),(int)(rx_y*reScaleY));
+        Range ry = new Range((int)(reScaleX*ry_x),(int)(reScaleY*ry_y));
+
         Range2D frame = new Range2D(rx,ry);
         directed_weighted_graph g = _ar.getGraph();
         _w2f = Arena.w2f(g,frame);
-        GPanel game_panel = new GPanel(_ar,_w2f);
-        compAdapt frl_com = new compAdapt(this);
-        game_panel.setSize(800,600);
-        setLayout(null);
-        add(game_panel);
-
-        addComponentListener(frl_com);
+        GPanel main = new GPanel(_ar,_w2f);
+        main.setSize(800,600);
+        setLayout(new BorderLayout());
+        add(main);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
-    public void initMain(){
+    public void initMain(float reScaleX,float reScaleY){
         main = new GPanel();
-        main.setSize(800,600);
+        main.setSize((int)(800*reScaleX),(int)(600*reScaleY));
         setLayout(null);
         actionLis = new myAction(this);
         text = new JTextField(10);
         button = new JButton();
-        compAdapt = new compAdapt(this);
+
+
 
         Color c = new Color(248,232,248);
         setBackground(c);
         button.setBackground(c);
-        button.setBounds(352, 450, 60, 60);
+
+        button.setBounds((int)(370*reScaleX), (int)(495*reScaleY), 60, 60);
         try{
-            File file = new File("resources/pokeball.jpg");
+            File file = new File("resources/pokeball1.png");
             ball = ImageIO.read(file);
             Image im = ball.getScaledInstance(button.getWidth(),button.getHeight(),Image.SCALE_SMOOTH);
             ImageIcon ans = new ImageIcon(im);
+            button.setBorder(null);
             button.setIcon(ans);
         }catch (Exception e){
             e.printStackTrace();
         }
         //Enter a Level
-        text.setText("11");
+        text.setText("12");
         text.setFont(new Font("Arial", Font.PLAIN, 14));
-        text.setBounds(50, 50, 100, 25);
+        text.setBounds((int)(50*reScaleX), (int)(50*reScaleY), 100, 25);
         text.addMouseListener(this);
         text.addKeyListener(actionLis);
 
         button.addMouseListener(this);
         button.addKeyListener(actionLis);
-
-
-        addComponentListener(compAdapt);
-
 
 
         add(button);
@@ -149,9 +150,6 @@ public class Gframe extends JFrame implements MouseListener{
     public void setPressed(boolean pressed) {
         this.pressed = pressed;
     }
-    public JButton getButton() {
-        return button;
-    }
     private boolean check(String string){
         if(string.matches("[0-9]+") &&string.length() < 3 &&
                 Integer.parseInt(string) < 24 ){
@@ -159,14 +157,8 @@ public class Gframe extends JFrame implements MouseListener{
         }
         return false;
     }
-    public double getReScaleX() {
-        return reScaleX;
-    }
     public void setReScaleX(float reScaleX) {
         this.reScaleX = reScaleX;
-    }
-    public double getReScaleY() {
-        return reScaleY;
     }
     public void setReScaleY(float reScaleY) {
         this.reScaleY = reScaleY;
@@ -183,6 +175,9 @@ public class Gframe extends JFrame implements MouseListener{
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+    public GPanel getMain() {
+        return main;
     }
 }
 

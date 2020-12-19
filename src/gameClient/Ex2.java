@@ -45,7 +45,7 @@ public class Ex2 implements Runnable {
         gframe.setSize(800, 600);
         gframe.setResizable(true);
         gframe.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        gframe.initMain();
+        gframe.initMain(1,1);
         gframe.show();
         long fps = 2;
         while(!gframe.getPressed()) {
@@ -56,6 +56,7 @@ public class Ex2 implements Runnable {
             catch(Exception e) {
                 e.printStackTrace();
             }
+
         }
         myMusic song2 = new myMusic(2);
         this.scenario = Integer.parseInt(gframe.getJTextString());
@@ -63,26 +64,27 @@ public class Ex2 implements Runnable {
         gframe.dispose();//////
         game_service game = Game_Server_Ex2.getServer(this.scenario);
         init(game);
+        gframe.setTitle("Pokemon Game - Scenario number: "+scenario);
         setAgentsTargetedArea(_ar.getAgents(),_ar.getGraph());
         game.startGame();
         int ind = 0;
-        gframe.setTitle("Pokemon Game - Scenario number: "+scenario);
         while (game.isRunning()) {
-            moveAgents(game);
-            game.move();
             try {
+                moveAgents(game);
+                game.move();
                 if(ind % 1==0) {
                     Thread.sleep(_sleep_time);
                     gframe.repaint();
                     ind++;
+
                 }
             }
             catch(Exception e) {
                 e.printStackTrace();
             }
         }
-        System.out.println(game.toString());
-        System.exit(0);
+       System.out.println(game.toString());
+       System.exit(0);
     }
 
     public synchronized void init(game_service game) {
@@ -125,12 +127,12 @@ public class Ex2 implements Runnable {
                                 dest = checkProximityCase(current_agent, pokemons).poll().get_edge().getDest();
                             }
                             if (current_agent.get_curr_edge() != null) {
-                                System.out.println(current_agent.get_curr_edge().toString() + "  " + closest.get_edge().toString());
-                                System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
+                               // System.out.println(current_agent.get_curr_edge().toString() + "  " + closest.get_edge().toString());
+                               // System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
                             }
                             else {
-                                System.out.println(current_agent.get_curr_edge() + "  " + closest.get_edge().toString());
-                                System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
+                               // System.out.println(current_agent.get_curr_edge() + "  " + closest.get_edge().toString());
+                               // System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
                             }
                         }
                     }
@@ -145,19 +147,18 @@ public class Ex2 implements Runnable {
                     }
                     game.chooseNextEdge(current_agent.getID(),dest);
                     if (current_agent.get_curr_edge() != null) {
-                        System.out.println(current_agent.get_curr_edge().toString() + "  " + closest.get_edge().toString());
-                        System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
+                       // System.out.println(current_agent.get_curr_edge().toString() + "  " + closest.get_edge().toString());
+                       // System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
                     }
                     else {
-                        System.out.println(current_agent.get_curr_edge() + "  " + closest.get_edge().toString());
-                        System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
+                       // System.out.println(current_agent.get_curr_edge() + "  " + closest.get_edge().toString());
+                       // System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
                     }
                 }
             }
             //setTimeToSleep(current_agent, dest, graph_game);
         }
     }
-
     private synchronized static int chooseNextNode(directed_weighted_graph graph, CL_Agent agent, CL_Pokemon pokemon) {
         dw_graph_algorithms graph_algo = new DWGraph_Algo();
         graph_algo.init(graph);
@@ -188,13 +189,11 @@ public class Ex2 implements Runnable {
             return Math.min(pokemon.get_edge().getDest(),pokemon.get_edge().getSrc());
         }
     }
-
     public synchronized static void updateAllEdges(List<CL_Pokemon> pokemons_arr, directed_weighted_graph graph) {
         for (CL_Pokemon pokemon : pokemons_arr) {
             Arena.updateEdge(pokemon, graph);
         }
     }
-
     public synchronized static CL_Pokemon returnClosestPokemon(List<CL_Pokemon> pokemons_arr, CL_Agent agent, directed_weighted_graph graph) {
         dw_graph_algorithms graph_algo = new DWGraph_Algo();
         graph_algo.init(graph);
@@ -240,8 +239,6 @@ public class Ex2 implements Runnable {
         else return null;
     }
 
-
-
     public synchronized static void placeAgents(game_service game) {
         PriorityQueue<CL_Pokemon> pokemon_value_queue = new PriorityQueue<>(new Comparator<>() {
             @Override
@@ -277,7 +274,6 @@ public class Ex2 implements Runnable {
         List<CL_Agent> result_agents_arr = Arena.initAgentsFromJson(game.getAgents());
         _ar.setAgents(result_agents_arr);
     }
-
     public synchronized static List<CL_Pokemon> returnClosestPokemonArr(List<CL_Pokemon> pokemons_arr, CL_Agent agent, directed_weighted_graph graph) {
         dw_graph_algorithms graph_algo = new DWGraph_Algo();
         List<CL_Pokemon> result = new ArrayList<>();
@@ -296,13 +292,11 @@ public class Ex2 implements Runnable {
         }
         return result;
     }
-
     public synchronized static void resetTargeting(List<CL_Pokemon> pokemons_arr) {
         for (CL_Pokemon pokemon : pokemons_arr) {
             pokemon.untargetPokemon();
         }
     }
-
     public synchronized static void setAgentsTargetedArea(List<CL_Agent> agents, directed_weighted_graph graph) {
         if (agents.size() <= 2) {
             return;
@@ -327,7 +321,6 @@ public class Ex2 implements Runnable {
             }
         }
     }
-
     public static synchronized long setTimeToSleep(CL_Agent agent, int target, directed_weighted_graph graph) {
         if (target == -1) {
             return 100;
@@ -345,7 +338,6 @@ public class Ex2 implements Runnable {
         }
         return 100;
     }
-
     public synchronized void updateAgentsFormerValue(List<CL_Agent> agents, game_service game) {
         String agents_json = game.getAgents();
         for (CL_Agent agent : agents) {
@@ -364,7 +356,6 @@ public class Ex2 implements Runnable {
         }
         return -1;
     }
-
     public synchronized static void checkIfEaten(List<CL_Agent> agents) {
         boolean flag = true;
         for (CL_Agent agent : agents) {
@@ -376,3 +367,7 @@ public class Ex2 implements Runnable {
         }
     }
 }
+    //Brain brain = new Brain();
+//        brain.setScenario(scenario);
+//        brain.setGame(game);
+//        brain.run();
