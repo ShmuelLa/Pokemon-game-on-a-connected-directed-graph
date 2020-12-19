@@ -1,51 +1,44 @@
 package gameClient.util;
 
+import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
 public class compAdapt implements ComponentListener {
     private Gframe frame;
-    private float rescaleFactorx;
-    private float rescaleFactory;
-    private int initx;
-    private int inity;
-    public compAdapt(Gframe frame) {
+
+
+    public compAdapt() {
         super();
-        this.frame = frame;
-        rescaleFactorx = 1;
-        rescaleFactory = 1;
-        initx = frame.getWidth();
-        inity = frame.getHeight();
     }
+
     @Override
     public void componentResized(ComponentEvent e) {
-            scalef(frame);
+        scale(frame.getWidth(),frame.getHeight(),800,600);
     }
-    private void  scalef(Gframe frame){
-        int facx = frame.getWidth();
-        int facy = frame.getHeight();
+    private void  scale(int width,int height,int x,int y){
 
-        if (facx > initx) {
-            float temp = (float) facx / initx;
-            frame.setReScaleX(temp);
-            rescaleFactorx = temp;
-            System.out.println(temp);
-        } else if (facx < initx) {
-            float temp = (float) initx / facx;
-            frame.setReScaleX(1 / temp);
-            rescaleFactorx = temp;
+        if (width > x) {
+            float temp = (float) width / x;
+            //frame.setReScaleX(temp);
+            frame.initMain(temp,1);
+        } else if (width < x) {
+            float temp = (float) width / x;
+           // frame.setReScaleX(1 / temp);
+            frame.initMain(temp,1);
         } else frame.setReScaleX(1);
 
-        if (facy > inity) {
-            float temp = (float) facy / inity;
-            frame.setReScaleY(temp);
-            rescaleFactory = temp;
-        } else if (facy < inity) {
-            float temp = (float) inity / facy;
-            frame.setReScaleY(1/temp);
-            rescaleFactory =temp;
+        if (height > y) {
+            float temp = (float) height / y;
+           // frame.setReScaleY(temp);
+            frame.initMain(1,temp);
+        } else if (height < y) {
+            float temp = (float) y / height;
+            //frame.setReScaleY(temp);
+            frame.initMain(1,temp);
         } else frame.setReScaleY(1);
     }
+
 
     @Override
     public void componentMoved(ComponentEvent e) {
@@ -61,10 +54,8 @@ public class compAdapt implements ComponentListener {
     public void componentHidden(ComponentEvent e) {
 
     }
-    public float getRescaleFactorx() {
-        return rescaleFactorx;
+    public void setFrame(Gframe frame) {
+        this.frame = frame;
     }
-    public float getRescaleFactory() {
-        return rescaleFactory;
-    }
+
 }
