@@ -1,7 +1,7 @@
+package gameClient.util;
+
 import api.directed_weighted_graph;
 import gameClient.Arena;
-import gameClient.util.Range;
-import gameClient.util.Range2D;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -34,7 +34,7 @@ public class Gframe extends JFrame implements MouseListener{
 
 
 
-    Gframe(){
+    public Gframe(){
         super();
     }
     public void updategame(Arena ar) {

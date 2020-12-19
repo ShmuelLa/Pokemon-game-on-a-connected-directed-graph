@@ -1,3 +1,5 @@
+package gameClient.util;
+
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
@@ -8,7 +10,7 @@ import java.io.IOException;
 public class myMusic implements Runnable{
     private int song;
 
-    myMusic(int x){
+    public myMusic(int x){
         song = x;
     }
     @Override
