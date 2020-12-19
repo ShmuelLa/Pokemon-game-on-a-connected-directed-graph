@@ -102,7 +102,9 @@ public class MyFrame extends JFrame{
 			Point3D c = f.getLocation();
 			int r=10;
 			g.setColor(Color.green);
-			if(f.getType()<0) {g.setColor(Color.orange);}
+			if(f.getType()<0) {
+				g.setColor(Color.orange);
+			}
 			if(c!=null) {
 
 				geo_location fp = this._w2f.world2frame(c);
