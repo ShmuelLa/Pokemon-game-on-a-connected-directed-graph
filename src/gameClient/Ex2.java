@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Ex2 implements Runnable {
     private static MyFrame _win;
     private static Arena _ar;
-    public static long _sleep_time = 100;
+    public static long _sleep_time = 20;
     public static directed_weighted_graph _game_graph;
 
     public static void main(String[] args) {
@@ -60,11 +60,11 @@ public class Ex2 implements Runnable {
     public synchronized void init(game_service game) {
         this._game_graph = Arena.parseGraph(game.getGraph());
         _ar = new Arena(game);
+        placeAgents(game);
         _win = new MyFrame("test Ex2");
         _win.setSize(1200, 900);
         _win.update(_ar);
         _win.show();
-        placeAgents(game);
         _ar.updateArena(game);
     }
 
@@ -89,31 +89,50 @@ public class Ex2 implements Runnable {
                         if (!next_closest.isTargeted()) {
                             next_closest.targetPokemon();
                             current_agent.setCurrentTarget(next_closest);
-                            dest = chooseNextNode(_game_graph, src, next_closest);
+                            dest = chooseNextNode(_game_graph, current_agent, next_closest);
                             game.chooseNextEdge(current_agent.getID(),dest);
-                            System.out.println(current_agent.toString()+" to: "+dest+" SP "+current_agent.getSpeed());
+                            current_agent.setNextNode(dest);
+                            if (current_agent.get_curr_edge() != null) {
+                                System.out.println(current_agent.get_curr_edge().toString() + "  " + closest.get_edge().toString());
+                                System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
+                            }
+                            else {
+                                System.out.println(current_agent.get_curr_edge() + "  " + closest.get_edge().toString());
+                                System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
+                            }
                         }
                     }
                 }
                 else {
                     closest.targetPokemon();
                     current_agent.setCurrentTarget(closest);
-                    dest = chooseNextNode(_game_graph, src, closest);
+                    dest = chooseNextNode(_game_graph, current_agent, closest);
                     game.chooseNextEdge(current_agent.getID(),dest);
-                    System.out.println(current_agent.toString()+" to: "+dest+" SP "+current_agent.getSpeed());
+                    current_agent.setNextNode(dest);
+                    if (current_agent.get_curr_edge() != null) {
+                        System.out.println(current_agent.get_curr_edge().toString() + "  " + closest.get_edge().toString());
+                        System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
+                    }
+                    else {
+                        System.out.println(current_agent.get_curr_edge() + "  " + closest.get_edge().toString());
+                        System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
+                    }
                 }
             }
             //setTimeToSleep(current_agent, dest, graph_game);
         }
     }
 
-    private synchronized static int chooseNextNode(directed_weighted_graph graph, int src, CL_Pokemon pokemon) {
+    private synchronized static int chooseNextNode(directed_weighted_graph graph, CL_Agent agent, CL_Pokemon pokemon) {
         dw_graph_algorithms graph_algo = new DWGraph_Algo();
         graph_algo.init(graph);
         List<node_data> poke_path;
+/*        if (agent.get_curr_edge().equals(pokemon.get_edge())) {
+            return agent.get_curr_edge().getDest();
+        }*/
         if (pokemon.getType() > 0) {
             int targeted_node = Math.min(pokemon.get_edge().getDest(),pokemon.get_edge().getSrc());
-            poke_path = graph_algo.shortestPath(src,targeted_node);
+            poke_path = graph_algo.shortestPath(agent.getSrcNode(),targeted_node);
             if (poke_path != null) {
                 if (poke_path.size() > 1) {
                     return poke_path.get(1).getKey();
@@ -123,7 +142,7 @@ public class Ex2 implements Runnable {
         }
         else {
             int targeted_node = Math.max(pokemon.get_edge().getDest(),pokemon.get_edge().getSrc());
-            poke_path = graph_algo.shortestPath(src,targeted_node);
+            poke_path = graph_algo.shortestPath(agent.getSrcNode(),targeted_node);
             if (poke_path != null) {
                 if (poke_path.size() > 1) {
                     return poke_path.get(1).getKey();
@@ -154,7 +173,7 @@ public class Ex2 implements Runnable {
         return distance_map.get(distances.get(0));
     }
 
-    public static void placeAgents(game_service game) {
+    public synchronized static void placeAgents(game_service game) {
         PriorityQueue<CL_Pokemon> pokemon_value_queue = new PriorityQueue<>(new Comparator<>() {
             @Override
             public int compare(CL_Pokemon poke1, CL_Pokemon poke2) {
@@ -171,13 +190,15 @@ public class Ex2 implements Runnable {
         for(int i = 0; i < agents_number; i++) {
             if (!pokemon_value_queue.isEmpty()) {
                 CL_Pokemon c_pokemon = pokemon_value_queue.poll();
-/*                if (c_pokemon.getType() > 0) {
-                    game.addAgent(Math.min(c_pokemon.get_edge().getSrc(),c_pokemon.get_edge().getSrc()));
+                if (c_pokemon.getType() > 0) {
+                    Math.min(c_pokemon.get_edge().getSrc(),c_pokemon.get_edge().getDest());
+                    game.addAgent(Math.min(c_pokemon.get_edge().getSrc(),c_pokemon.get_edge().getDest()));
                 }
-                else {
-                    game.addAgent(Math.max(c_pokemon.get_edge().getSrc(),c_pokemon.get_edge().getSrc()));
-                }*/
-                game.addAgent(c_pokemon.get_edge().getSrc());
+                else if (c_pokemon.getType() < 0) {
+                    Math.max(c_pokemon.get_edge().getSrc(),c_pokemon.get_edge().getDest());
+                    game.addAgent(Math.max(c_pokemon.get_edge().getSrc(),c_pokemon.get_edge().getDest()));
+                }
+                //game.addAgent(c_pokemon.get_edge().getSrc());
                 treated_agents--;
             }
         }
@@ -185,6 +206,8 @@ public class Ex2 implements Runnable {
             game.addAgent(ThreadLocalRandom.current().nextInt(1, _game_graph.nodeSize()));
             treated_agents--;
         }
+        List<CL_Agent> result_agents_arr = Arena.initAgentsFromJson(game.getAgents());
+        _ar.setAgents(result_agents_arr);
     }
 
     public synchronized static List<CL_Pokemon> returnClosestPokemonArr(List<CL_Pokemon> pokemons_arr, CL_Agent agent, directed_weighted_graph graph) {
@@ -260,6 +283,13 @@ public class Ex2 implements Runnable {
         for (CL_Agent agent : agents) {
 
         }
+    }
+
+    public synchronized int avoidRepeat(CL_Pokemon pokemon, CL_Agent agent) {
+        for (edge_data edge : this._game_graph.getE(agent.getSrcNode())) {
+            if (edge.equals(pokemon.get_edge())) return edge.getDest();
+        }
+        return -1;
     }
 
     public synchronized static void checkIfEaten(List<CL_Agent> agents) {

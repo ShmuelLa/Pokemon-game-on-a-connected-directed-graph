@@ -103,7 +103,7 @@ class GameTest {
         game_service game = Game_Server_Ex2.getServer(11);
         String pokemon_json = game.getPokemons();
         System.out.println(game.getPokemons());
-        ArrayList<CL_Pokemon> pokemon_list = json2Pokemons(pokemon_json);
+        ArrayList<CL_Pokemon> pokemon_list = initPokemonsFromJson(pokemon_json);
         assertEquals(6,pokemon_list.size());
         assertEquals(5.0,pokemon_list.get(0).getValue());
         assertEquals(8.0,pokemon_list.get(1).getValue());
@@ -115,7 +115,7 @@ class GameTest {
     void agentsPlacing_updateEdge() {
         game_service game = Game_Server_Ex2.getServer(11);
         directed_weighted_graph graph = parseGraph(game.getGraph());
-        ArrayList<CL_Pokemon> pokemon_list = json2Pokemons(game.getPokemons());
+        ArrayList<CL_Pokemon> pokemon_list = initPokemonsFromJson(game.getPokemons());
         System.out.println(game.getPokemons());
         System.out.println(pokemon_list.size());
         for (CL_Pokemon pokemon : pokemon_list) {
@@ -153,7 +153,7 @@ class GameTest {
     @Test
     void pokemonTargeting() {
         game_service game = Game_Server_Ex2.getServer(11);
-        ArrayList<CL_Pokemon> pokemon_list = json2Pokemons(game.getPokemons());
+        ArrayList<CL_Pokemon> pokemon_list = initPokemonsFromJson(game.getPokemons());
         for (CL_Pokemon pokemon : pokemon_list) {
             assertFalse(pokemon.isTargeted());
         }
@@ -171,7 +171,7 @@ class GameTest {
     void agentTargeting() {
         game_service game = Game_Server_Ex2.getServer(11);
         directed_weighted_graph graph = parseGraph(game.getGraph());
-        ArrayList<CL_Pokemon> pokemon_list = json2Pokemons(game.getPokemons());
+        ArrayList<CL_Pokemon> pokemon_list = initPokemonsFromJson(game.getPokemons());
         System.out.println(game.getAgents());
         for (CL_Pokemon pokemon : pokemon_list) {
             Arena.updateEdge(pokemon, graph);
@@ -187,6 +187,15 @@ class GameTest {
             }
         });
         pokemon_value_queue.addAll(pokemon_list);
+    }
+
+    @Test
+    void stuckScenarioTest() {
+        game_service game = Game_Server_Ex2.getServer(11);
+        directed_weighted_graph graph = parseGraph(game.getGraph());
+        dw_graph_algorithms algo = new DWGraph_Algo();
+        algo.init(graph);
+        System.out.println(algo.shortestPath(1,26).get(1).getKey());
     }
 }
 

@@ -1,32 +1,22 @@
 package gameClient;
 
 import api.*;
+import com.google.gson.JsonObject;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
 import java.util.Iterator;
 
 public class CL_Pokemon {
-	private edge_data _edge;
 	private double _value;
 	private int _type;
-	private Point3D _pos;
-	private double min_dist;
-	private int min_ro;
+	private Point3D _location;
+	private edge_data _edge;
 	private boolean _isTargeted = false;
-	private boolean _isBlackListed = false;
-	
-	public CL_Pokemon(Point3D p, int t, double v, double s, edge_data e) {
-		this._type = t;
-		this._value = v;
-		this._edge = e;
-		this._pos = p;
-		this.min_dist = -1;
-		this.min_ro = -1;
-		this._isTargeted = false;
-	}
 
-	public String toString() {
-		return "F:{v="+_value+", t="+_type+"}";
+	public CL_Pokemon(JsonObject json) {
+		this._value = json.getAsJsonObject("Pokemon").get("value").getAsInt();
+		this._type = json.getAsJsonObject("Pokemon").get("type").getAsInt();
+		this._location = new Point3D(json.getAsJsonObject("Pokemon").get("pos").getAsString());
 	}
 
 	public edge_data get_edge() {
@@ -38,7 +28,7 @@ public class CL_Pokemon {
 	}
 
 	public Point3D getLocation() {
-		return _pos;
+		return _location;
 	}
 
 	public int getType() {
@@ -47,22 +37,6 @@ public class CL_Pokemon {
 
 	public double getValue() {
 		return _value;
-	}
-
-	public double getMin_dist() {
-		return min_dist;
-	}
-
-	public void setMin_dist(double mid_dist) {
-		this.min_dist = mid_dist;
-	}
-
-	public int getMin_ro() {
-		return min_ro;
-	}
-
-	public void setMin_ro(int min_ro) {
-		this.min_ro = min_ro;
 	}
 
 /*	public edge_data searchPokemonEdge(CL_Pokemon fr, directed_weighted_graph g) {
@@ -85,6 +59,10 @@ public class CL_Pokemon {
 		return result;
 	}*/
 
+	/*	public String () {
+		return "F:{v="+_value+", t="+_type+"}";
+	}*/
+
 	public void targetPokemon() {
 		this._isTargeted = true;
 	}
@@ -95,13 +73,5 @@ public class CL_Pokemon {
 
 	public boolean isTargeted() {
 		return this._isTargeted;
-	}
-
-	public void blacklist() {
-		this._isBlackListed = true;
-	}
-
-	public boolean checkIfBlacklisted() {
-		return this._isBlackListed;
 	}
 }

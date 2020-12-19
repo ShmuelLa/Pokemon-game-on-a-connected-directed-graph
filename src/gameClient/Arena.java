@@ -34,22 +34,23 @@ public class Arena {
 		this._info = new ArrayList<String>();
 		this._graph = parseGraph(game.getGraph());
 		this._agents = new ArrayList<>();
-		this._pokemons = Arena.json2Pokemons(game.getPokemons());
+		this._pokemons = Arena.initPokemonsFromJson(game.getPokemons());
 		this.updatePokemonEdges();
 	}
 
 	public void updateArena(game_service game) {
-		this._agents = json2Agents(game.getAgents());
-		this._pokemons = Arena.json2Pokemons(game.getPokemons());
+		this.updateAgentsFromJson(game.getAgents());
+		this._pokemons = initPokemonsFromJson(game.getPokemons());
 		this.updatePokemonEdges();
+		this.updateAgentEdges();
 	}
 
-	public void setPokemons(List<CL_Pokemon> f) {
-		this._pokemons = f;
+	public void setPokemons(List<CL_Pokemon> pokemons) {
+		this._pokemons = pokemons;
 	}
 
-	public void setAgents(List<CL_Agent> f) {
-		this._agents = f;
+	public void setAgents(List<CL_Agent> agents) {
+		this._agents = agents;
 	}
 
 	public void setGraph(directed_weighted_graph g) {
@@ -129,7 +130,7 @@ public class Arena {
 		return _agents;
 	}
 
-	public static ArrayList<CL_Agent> json2Agents(String json) {
+	public static ArrayList<CL_Agent> initAgentsFromJson(String json) {
 		ArrayList<CL_Agent> result = new ArrayList<>();
 		JsonObject agents_obj = JsonParser.parseString(json).getAsJsonObject();
 		JsonArray J_obj = agents_obj.getAsJsonArray("Agents");
@@ -140,23 +141,29 @@ public class Arena {
 		return result;
 	}
 
-	public static ArrayList<CL_Pokemon> json2Pokemons(String fs) {
-		ArrayList<CL_Pokemon> ans = new  ArrayList<CL_Pokemon>();
-		try {
-			JSONObject ttt = new JSONObject(fs);
-			JSONArray ags = ttt.getJSONArray("Pokemons");
-			for(int i=0;i<ags.length();i++) {
-				JSONObject pp = ags.getJSONObject(i);
-				JSONObject pk = pp.getJSONObject("Pokemon");
-				int t = pk.getInt("type");
-				double v = pk.getDouble("value");
-				String p = pk.getString("pos");
-				CL_Pokemon f = new CL_Pokemon(new Point3D(p), t, v, 0, null);
-				ans.add(f);
+	public void updateAgentsFromJson(String json) {
+		JsonObject agents_obj = JsonParser.parseString(json).getAsJsonObject();
+		JsonArray J_obj = agents_obj.getAsJsonArray("Agents");
+		for (CL_Agent agent : this._agents) {
+			for (JsonElement json_agent : J_obj) {
+				JsonObject json_agent_obj = json_agent.getAsJsonObject();
+				if (json_agent_obj.getAsJsonObject("Agent").get("id").getAsInt() == agent.getID()) {
+					agent.update(json_agent_obj);
+				}
 			}
+			agent.setCurrentEdge(this._graph.getEdge(agent.getSrcNode(),agent.getNextNode()));
 		}
-		catch (JSONException e) {e.printStackTrace();}
-		return ans;
+	}
+
+	public static ArrayList<CL_Pokemon> initPokemonsFromJson(String json) {
+		ArrayList<CL_Pokemon> result = new ArrayList<>();
+		JsonObject pokemons_obj = JsonParser.parseString(json).getAsJsonObject();
+		JsonArray P_obj = pokemons_obj.getAsJsonArray("Pokemons");
+		for (JsonElement gson : P_obj) {
+			JsonObject json_pokemon = gson.getAsJsonObject();
+			result.add(new CL_Pokemon(json_pokemon));
+		}
+		return result;
 	}
 
 	public static void updateEdge(CL_Pokemon pokemon, directed_weighted_graph g) {
@@ -176,6 +183,12 @@ public class Arena {
 		}
 	}
 
+	public void updateAgentEdges() {
+		for (CL_Agent agent : this._agents) {
+			agent.setCurrentEdge(this._graph.getEdge(agent.getSrcNode(),agent.getNextNode()));
+		}
+	}
+
 	private static boolean isOnEdge(edge_data edge, CL_Pokemon pokemon, directed_weighted_graph graph) {
 		int src = edge.getSrc();
 		int dest = edge.getDest();
@@ -188,7 +201,7 @@ public class Arena {
 		return distance > d1 - EPS;
 	}
 
-	public static edge_data getPokemonEdge(CL_Pokemon pokemon, directed_weighted_graph g) {
+/*	public static edge_data getPokemonEdge(CL_Pokemon pokemon, directed_weighted_graph g) {
 		Iterator<node_data> itr = g.getV().iterator();
 		edge_data result = new EdgeData();
 		while(itr.hasNext()) {
@@ -204,7 +217,7 @@ public class Arena {
 			}
 		}
 		return result;
-	}
+	}*/
 
 /*	public static boolean isOnEdge(geo_location pos, edge_data edge, int type, directed_weighted_graph graph) {
 		int src = edge.getSrc();
