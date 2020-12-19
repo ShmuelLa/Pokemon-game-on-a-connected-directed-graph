@@ -37,6 +37,9 @@ public class Ex2 implements Runnable {
     @Override
     public synchronized void run() {
         gframe = new Gframe();
+        adapt = new compAdapt();/////////////
+        adapt.setFrame(gframe);//////////////
+        gframe.addComponentListener(adapt); //////////
         gframe.setSize(800, 600);
         gframe.setResizable(true);
         gframe.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -54,6 +57,8 @@ public class Ex2 implements Runnable {
         }
         myMusic song2 = new myMusic(2);
         this.scenario = Integer.parseInt(gframe.getJTextString());
+        gframe.setVisible(false);////
+        gframe.dispose();//////
         game_service game = Game_Server_Ex2.getServer(this.scenario);
         init(game);
         setAgentsTargetedArea(_ar.getAgents(),_ar.getGraph());
@@ -83,6 +88,7 @@ public class Ex2 implements Runnable {
         _ar = new Arena(game);
         placeAgents(game);
         gframe = new Gframe();
+        gframe.addComponentListener(adapt);//////
         gframe.setSize(800, 600);
         gframe.updategame(_ar);
         gframe.show();
