@@ -5,6 +5,7 @@ import api.*;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import gameClient.util.Gframe;
+import gameClient.util.compAdapt;
 import gameClient.util.myMusic;
 import java.util.*;
 import java.util.List;
@@ -16,6 +17,7 @@ public class Ex2 implements Runnable {
     private int scenario;
     private static Arena _ar;
     public static long _sleep_time = 90;
+    private compAdapt adapt;///
     public static directed_weighted_graph _game_graph;
 
     public synchronized static void main(String[] args) {
@@ -57,7 +59,7 @@ public class Ex2 implements Runnable {
         }
         myMusic song2 = new myMusic(2);
         this.scenario = Integer.parseInt(gframe.getJTextString());
-        gframe.setVisible(false);////
+        gframe.setVisible(false);
         gframe.dispose();//////
         game_service game = Game_Server_Ex2.getServer(this.scenario);
         init(game);
