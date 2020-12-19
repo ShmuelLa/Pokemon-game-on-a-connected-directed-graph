@@ -4,7 +4,6 @@ import Server.Game_Server_Ex2;
 import api.*;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -69,7 +68,7 @@ public class Ex2 implements Runnable {
         _ar.updateArena(game);
     }
 
-    public static void moveAgents(game_service game) {
+    public synchronized static void moveAgents(game_service game) {
         _ar.updateArena(game);
         List<CL_Agent> agents = _ar.getAgents();
         List<CL_Pokemon> pokemons = _ar.getPokemons();
@@ -112,11 +111,26 @@ public class Ex2 implements Runnable {
         dw_graph_algorithms graph_algo = new DWGraph_Algo();
         graph_algo.init(graph);
         List<node_data> poke_path;
-        poke_path = graph_algo.shortestPath(src,Arena.getPokemonEdge(pokemon, graph).getDest());
-        if (poke_path.size() > 1) {
-            return poke_path.get(1).getKey();
+        if (pokemon.getType() > 0) {
+            int targeted_node = Math.min(pokemon.get_edge().getDest(),pokemon.get_edge().getSrc());
+            poke_path = graph_algo.shortestPath(src,targeted_node);
+            if (poke_path != null) {
+                if (poke_path.size() > 1) {
+                    return poke_path.get(1).getKey();
+                }
+            }
+            return Math.max(pokemon.get_edge().getDest(),pokemon.get_edge().getSrc());
         }
-        else return Arena.getPokemonEdge(pokemon, graph).getSrc();
+        else {
+            int targeted_node = Math.max(pokemon.get_edge().getDest(),pokemon.get_edge().getSrc());
+            poke_path = graph_algo.shortestPath(src,targeted_node);
+            if (poke_path != null) {
+                if (poke_path.size() > 1) {
+                    return poke_path.get(1).getKey();
+                }
+            }
+            return Math.min(pokemon.get_edge().getDest(),pokemon.get_edge().getSrc());
+        }
     }
 
     public synchronized static void updateAllEdges(List<CL_Pokemon> pokemons_arr, directed_weighted_graph graph) {
@@ -156,12 +170,14 @@ public class Ex2 implements Runnable {
         int treated_agents = agents_number;
         for(int i = 0; i < agents_number; i++) {
             if (!pokemon_value_queue.isEmpty()) {
-/*                CL_Pokemon c_pokemon = pokemon_value_queue.poll();
-                int pokemon_dest_node = c_pokemon.get_edge().getSrc();
-                if(c_pokemon.getType() < 0) {
-                    pokemon_dest_node = c_pokemon.get_edge().getDest();
+                CL_Pokemon c_pokemon = pokemon_value_queue.poll();
+/*                if (c_pokemon.getType() > 0) {
+                    game.addAgent(Math.min(c_pokemon.get_edge().getSrc(),c_pokemon.get_edge().getSrc()));
+                }
+                else {
+                    game.addAgent(Math.max(c_pokemon.get_edge().getSrc(),c_pokemon.get_edge().getSrc()));
                 }*/
-                game.addAgent(pokemon_value_queue.poll().get_edge().getSrc());
+                game.addAgent(c_pokemon.get_edge().getSrc());
                 treated_agents--;
             }
         }

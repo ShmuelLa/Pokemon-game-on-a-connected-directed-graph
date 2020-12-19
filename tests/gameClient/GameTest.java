@@ -102,6 +102,7 @@ class GameTest {
     void pokemonParser() {
         game_service game = Game_Server_Ex2.getServer(11);
         String pokemon_json = game.getPokemons();
+        System.out.println(game.getPokemons());
         ArrayList<CL_Pokemon> pokemon_list = json2Pokemons(pokemon_json);
         assertEquals(6,pokemon_list.size());
         assertEquals(5.0,pokemon_list.get(0).getValue());
@@ -188,3 +189,4 @@ class GameTest {
         pokemon_value_queue.addAll(pokemon_list);
     }
 }
+

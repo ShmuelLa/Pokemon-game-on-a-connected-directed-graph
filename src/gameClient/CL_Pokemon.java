@@ -1,9 +1,6 @@
 package gameClient;
 
-import api.EdgeData;
-import api.directed_weighted_graph;
-import api.edge_data;
-import api.node_data;
+import api.*;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
 import java.util.Iterator;
@@ -68,7 +65,7 @@ public class CL_Pokemon {
 		this.min_ro = min_ro;
 	}
 
-	public edge_data searchPokemonEdge(CL_Pokemon fr, directed_weighted_graph g) {
+/*	public edge_data searchPokemonEdge(CL_Pokemon fr, directed_weighted_graph g) {
 		//	oop_edge_data ans = null;
 		Iterator<node_data> itr = g.getV().iterator();
 		edge_data result = new EdgeData();
@@ -86,7 +83,7 @@ public class CL_Pokemon {
 			}
 		}
 		return result;
-	}
+	}*/
 
 	public void targetPokemon() {
 		this._isTargeted = true;

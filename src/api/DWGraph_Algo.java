@@ -109,7 +109,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      * @return
      */
     @Override
-    public double shortestPathDist(int src, int dest) {
+    public synchronized double shortestPathDist(int src, int dest) {
         if (this._algo_graph.nodeSize()<=1 || this._algo_graph.getNode(src)==null || this._algo_graph.getNode(dest)==null) return -1;
         if (src == dest) return 0.0;
         PriorityQueue<node_data> pq = new PriorityQueue<>();
@@ -155,7 +155,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      * @return
      */
     @Override
-    public List<node_data> shortestPath(int src, int dest) {
+    public synchronized List<node_data> shortestPath(int src, int dest) {
         if (this._algo_graph.nodeSize()<=1 || this._algo_graph.getNode(src)==null || this._algo_graph.getNode(dest)==null) return null;
         if (src == dest) return new ArrayList<>();
         PriorityQueue<node_data> pq = new PriorityQueue<>();
