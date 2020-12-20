@@ -552,4 +552,7 @@ public class Ex2 implements Runnable {
             System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
         }
     }
+    public static long getime(){
+        return _game.timeToEnd();
+    }
 }

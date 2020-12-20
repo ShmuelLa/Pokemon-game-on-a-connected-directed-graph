@@ -21,8 +21,7 @@ public class myAction implements KeyListener {
                 frame.setPressed(true);
 
             }else{
-                JOptionPane.showMessageDialog(frame, "Please choose a " +
-                "a level from 0 - 23");
+                JOptionPane.showMessageDialog(frame, "Invalid input");
                 frame.setPressed(false);
                 frame.getJText().setText("Enter a Level");
             }
@@ -44,8 +43,8 @@ public class myAction implements KeyListener {
         }
     }
     private boolean check(String string){
-        if(string.matches("[0-9]+") && string.length() < 3 &&
-                Integer.parseInt(string) < 24 ){
+        if((string.matches("[0-9]+") ||
+                string.matches("[0-9]-") || string.contains("-"))){
             return true;
         }
         return false;
