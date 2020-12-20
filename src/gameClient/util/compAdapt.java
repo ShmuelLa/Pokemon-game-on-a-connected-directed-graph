@@ -30,7 +30,6 @@ public class compAdapt implements ComponentListener {
             float num = (float) frame.getHeight() / height;
             frame.setRey(num);
             frame.repaint();
-
         }else if ( frame.getHeight() < height){
             float num = (float) frame.getHeight() /height;
             frame.setRey(num);

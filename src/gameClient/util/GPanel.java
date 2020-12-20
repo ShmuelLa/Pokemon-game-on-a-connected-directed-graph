@@ -111,10 +111,10 @@ public class GPanel extends JPanel {
                         e.printStackTrace();
                     }
                     geo_location fp = this._w2f.world2frame(c);
-                    g.drawImage(pikachu, (int) (fp.x() - r*(frame.getRex())), (int)(fp.y() - r*(frame.getRey())), 2 * r, 2 * r, this);
+                    g.drawImage(pikachu, (int) ((fp.x()-r)*(frame.getRex())), (int)((fp.y()-r)*(frame.getRey())), 2 * r, 2 * r, this);
                     g2d.setColor(Color.black);
                     g2d.setFont(new Font("", Font.BOLD, 12));
-                    g2d.drawString("" + f.getValue(), (int) fp.x(), (int) fp.y() - r);
+                    g2d.drawString("" + f.getValue(), (int) (fp.x()*(frame.getRex())), (int) (fp.y()*(frame.getRey())) -  r);
                 }
             }
         }
@@ -131,10 +131,10 @@ public class GPanel extends JPanel {
         Point3D point = pokemon.getLocation();
         geo_location fp = this._w2f.world2frame(point);
         int r = 15;
-        g.drawImage(caterpie, (int) (fp.x() - r*(frame.getRex())), (int) (fp.y() - r*(frame.getRey())), 2 * r, 2 * r, this);
+        g.drawImage(caterpie, (int)Math.ceil(((fp.x()-r)*(frame.getRex()))), (int)Math.ceil((fp.y() - r)*(frame.getRey())), 2 * r, 2 * r, this);
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font("", Font.BOLD, 12));
-        g2d.drawString("" + pokemon.getValue(), (int) (fp.x()*(frame.getRex())), (int) (fp.y()*(frame.getRey())));
+        g2d.drawString("" + pokemon.getValue(), (int) (fp.x()*(frame.getRex())), (int) (fp.y()*(frame.getRey())) -r);
     }
 
     private void drawAgants(Graphics2D g) {
@@ -155,7 +155,7 @@ public class GPanel extends JPanel {
             if (c != null) {
 
                 geo_location fp = this._w2f.world2frame(c);
-                g.drawImage(gary, (int) (fp.x() - r*(frame.getRex())), (int) (fp.y() - r*(frame.getRey())), 2 * r, 2 * r, this);
+                g.drawImage(gary, (int) ((fp.x() - r)*(frame.getRex())), (int) ((fp.y() - r)*(frame.getRey())), 2 * r, 2 * r, this);
                 g2d.setColor(Color.RED);
                 g2d.setFont(new Font("", Font.BOLD, 12));
                 g2d.drawString("" + temp.getID(), (int) (fp.x()*(frame.getRex())), (int) (fp.y()*(frame.getRey())) - (2 * r));
@@ -166,9 +166,8 @@ public class GPanel extends JPanel {
     private void drawNode(node_data n, int r, Graphics2D g) {
         geo_location pos = n.getLocation();
         geo_location fp = this._w2f.world2frame(pos);
-        g.fillOval((int) (fp.x() - r*(frame.getRex())), (int) (fp.y() - r*(frame.getRey())), 2 * r, 2 * r);
+        g.fillOval((int) ((fp.x() - r)*(frame.getRex())), (int) ((fp.y() - r)*(frame.getRey())), 2 * r, 2 * r);
         g.drawString("" + n.getKey(), (int) (fp.x()*(frame.getRex())), (int) (fp.y()*(frame.getRey())) - 4 * r);
-        System.out.println(frame.getRex());
     }
 
     private void drawEdge(edge_data e, Graphics2D g) {
