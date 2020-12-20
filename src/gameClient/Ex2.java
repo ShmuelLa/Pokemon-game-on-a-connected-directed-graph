@@ -24,7 +24,7 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 public class Ex2 implements Runnable {
     private static Gframe gframe;
     private int _scenario;
-    private compAdapt adapt;///
+    private compAdapt adapt;
     private static Arena _arena;
     public static long _sleep_time = 100;
     public static game_service _game;
@@ -93,9 +93,9 @@ public class Ex2 implements Runnable {
         gframe.dispose();
         _game = Game_Server_Ex2.getServer(this._scenario);
         init();
-        adapt.setFrame(gframe);////////////// this is new!
+        adapt.setFrame(gframe);
         gframe.setTitle("Pokemon Game - Scenario number: "+_scenario);
-        gframe.setDefaultCloseOperation(EXIT_ON_CLOSE);// this is new!!!
+        gframe.setDefaultCloseOperation(EXIT_ON_CLOSE);
         setAgentsTargetedArea(_arena.getAgents());
         _game.startGame();
         int ind = 0;
@@ -129,8 +129,8 @@ public class Ex2 implements Runnable {
         _game_graph = Arena.parseGraph(_game.getGraph());
         _arena = new Arena(_game);
         placeAgents();
-        gframe = new Gframe(); // changed to 1 and added 2 to builder
-        gframe.addComponentListener(adapt);//////
+        gframe = new Gframe();
+        gframe.addComponentListener(adapt);
         gframe.setSize(800, 600);
         gframe.updategame(_arena);
         gframe.show();

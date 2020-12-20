@@ -121,7 +121,8 @@ class GameTest {
     void agentJsonTest() {
         String input = "{\"Agent\":{\"src\":39,\"pos\":\"35.20192230347054,32.10710793781513,0.0\",\"id\":2,\"dest\":15,\"value\":13,\"speed\":1}}";
         JsonObject json_obj = JsonParser.parseString(input).getAsJsonObject();
-        System.out.println(json_obj.getAsJsonObject("Agent").get("src"));
+        assertEquals(39,json_obj.getAsJsonObject("Agent").get("src").getAsInt());
+        assertEquals(2,json_obj.getAsJsonObject("Agent").get("id").getAsInt());
     }
 
     @Test
