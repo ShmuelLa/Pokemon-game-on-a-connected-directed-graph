@@ -217,37 +217,6 @@ public class Arena {
 		return distance > d1 - EPS;
 	}
 
-/*	public static edge_data getPokemonEdge(CL_Pokemon pokemon, directed_weighted_graph g) {
-		Iterator<node_data> itr = g.getV().iterator();
-		edge_data result = new EdgeData();
-		while(itr.hasNext()) {
-			node_data v = itr.next();
-			Iterator<edge_data> iter = g.getE(v.getKey()).iterator();
-			while(iter.hasNext()) {
-				edge_data e = iter.next();
-				boolean found = isOnEdge(e, pokemon, g);
-				if(found) {
-					pokemon.set_edge(e);
-					return e;
-				}
-			}
-		}
-		return result;
-	}*/
-
-/*	public static boolean isOnEdge(geo_location pos, edge_data edge, int type, directed_weighted_graph graph) {
-		int src = edge.getSrc();
-		int dest = edge.getDest();
-		if ((type < 0 && dest > src) || (type > 0 && src > dest)) {
-			return false;
-		}
-		geo_location src_pos = graph.getNode(src).getLocation();
-		geo_location dest_pos = graph.getNode(dest).getLocation();
-		double distance = src_pos.distance(dest_pos);
-		double d1 = src_pos.distance(pos) + pos.distance(dest_pos);
-		return distance > d1 - EPS;
-	}*/
-
 	private static Range2D GraphRange(directed_weighted_graph g) {
 		Iterator<node_data> itr = g.getV().iterator();
 		double x0=0,x1=0,y0=0,y1=0;

@@ -258,7 +258,7 @@ class GameTest {
             if (agent.getID() == 0) {
                 for (CL_Pokemon pokemon : _arena.getPokemons()) {
                     if (pokemon.getValue() == 13) {
-                        System.out.println(Ex2.returnClosestPokemon(_arena.getPokemons(),agent).get_edge().toString());
+                        System.out.println(Ex2.returnClosestPokemon(agent).get_edge().toString());
                     }
                 }
             }
