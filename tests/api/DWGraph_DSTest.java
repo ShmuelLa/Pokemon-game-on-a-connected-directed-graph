@@ -1,6 +1,9 @@
 package api;
 
 import org.junit.jupiter.api.Test;
+
+import java.util.Iterator;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class DWGraph_DSTest {
@@ -55,5 +58,26 @@ class DWGraph_DSTest {
         wg.removeNode(3);
         assertEquals(2,wg.edgeSize());
         assertNull(wg.getEdge(3,5));
+    }
+
+    public void genEdge(DWGraph_DS g, int how_many_e){
+        int max = Integer.MIN_VALUE; int min = Integer.MAX_VALUE;
+        Iterator<node_data> iti = g.getV().iterator();
+        while( iti.hasNext()){
+            node_data sus = iti.next();
+            if( sus.getKey() > max){
+                max = sus.getKey();
+            }if( sus.getKey() < min){
+                min = sus.getKey();
+            }
+        }
+        for ( int i = 0 ; i < how_many_e; i++){
+            int r_num_S = (int) (Math.random() *(max - min ) + min );
+            int r_num_D = (int) (Math.random() *(max - min ) + min );
+            double r_num_W = Math.random()*10;
+            if ((g.getNode(r_num_S) !=null && g.getNode(r_num_D) != null) && r_num_D != r_num_S &&(g.getEdge(r_num_S,r_num_D) == null) ){
+                g.connect(r_num_S,r_num_D,r_num_W);
+            }else i--;
+        }
     }
 }

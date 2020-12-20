@@ -23,8 +23,8 @@ public class Gframe extends JFrame implements MouseListener{
     private myAction actionLis;
     private GPanel main;
     private BufferedImage ball;
-    private float rex;
-    private float rey;
+    private float rex = 1;
+    private float rey = 1;
     private compAdapt adapt;
 
 
@@ -60,6 +60,7 @@ public class Gframe extends JFrame implements MouseListener{
         setLayout(new BorderLayout());
         add(main);
         this.addComponentListener(adapt);
+
     }
 
     /**
@@ -93,10 +94,8 @@ public class Gframe extends JFrame implements MouseListener{
         text.setBounds(50, 50, 100, 25);
         text.addMouseListener(this);
         text.addKeyListener(actionLis);
-
         button.addMouseListener(this);
         button.addKeyListener(actionLis);
-
         add(button);
         add(text);
         add(main);

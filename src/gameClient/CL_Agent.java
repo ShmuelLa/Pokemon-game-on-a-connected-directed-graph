@@ -158,7 +158,7 @@ public class CL_Agent {
 	 * @return String representing this current agent minimalistic information
 	 */
 	public String toString() {
-		return "ID: "+this.getID()+" Val: "+this.getValue()+", "+_location+", "+isMoving()+", ";
+		return "ID: "+this.getID()+" Val: "+this.getValue()+", Pos: "+_location+", ";
 	}
 
 	/**

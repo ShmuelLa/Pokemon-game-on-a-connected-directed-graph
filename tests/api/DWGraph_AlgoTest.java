@@ -1,11 +1,10 @@
 package api;
 
 import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -95,6 +94,44 @@ class DWGraph_AlgoTest {
         } catch (IOException e) {
             System.out.println("Wrong Input");
             e.printStackTrace();
+        }
+    }
+    
+    /**
+     * This method was created for randomising the connections for the graph creator
+     * if prevents the connected node ID to be equal or outside of graph bounds
+     *
+     * @param n_id - The node to be connected
+     * @param n_size - The node size of the graph
+     * @return INT - The node ID chosen to be connected
+     */
+    private static int rndInt(int n_id, int n_size) {
+        Random rnd_int = new Random();
+        int result = rnd_int.nextInt(n_size);
+        while (result==0 || result > n_size || result==n_id) {
+            result = rnd_int.nextInt(n_size);
+        }
+        return result;
+    }
+
+    public void genEdge(directed_weighted_graph g, int how_many_e){
+        int max = Integer.MIN_VALUE; int min = Integer.MAX_VALUE;
+        Iterator<node_data> iti = g.getV().iterator();
+        while( iti.hasNext()){
+            node_data sus = iti.next();
+            if( sus.getKey() > max){
+                max = sus.getKey();
+            }if( sus.getKey() < min){
+                min = sus.getKey();
+            }
+        }
+        for ( int i = 0 ; i < how_many_e; i++){
+            int r_num_S = (int) (Math.random() *(max - min ) + min );
+            int r_num_D = (int) (Math.random() *(max - min ) + min );
+            double r_num_W = Math.random()*10;
+            if ((g.getNode(r_num_S) !=null && g.getNode(r_num_D) != null) && r_num_D != r_num_S &&(g.getEdge(r_num_S,r_num_D) == null) ){
+                g.connect(r_num_S,r_num_D,r_num_W);
+            }else i--;
         }
     }
 }
