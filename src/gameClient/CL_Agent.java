@@ -9,8 +9,8 @@ import gameClient.util.Point3D;
 import java.util.HashSet;
 
 /**
- * This class represents an agent. Each agent is represented with a location an an edge
- * on a graph. And the main interest is to guide these agents to each as much pokemons
+ * This class represents an agent. Each agent is represented with a location an a graph edge.
+ * The main interest is to guide these agents to each as much pokemons
  * We can. Each an every agent is initialized and updated by a json string received from the game server
  *
  * @author gison.avziz & shmuel.lavian

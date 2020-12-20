@@ -102,8 +102,19 @@ of nodes and edges while randomizing their connections
 of that in order to test complex algorithms like BFS and Dijkstra's. 
 Implemented in `mainTestGraph()` and `mainTestGraphAlg()` accordingly
 
-### Main Graph Built for Testing
-![alt text](resources/WikiPictures/testgraph.jpg)
+## Game Results
+| **Stage** | **Moves** | **Grade** |
+|-----------|-----------|-----------|
+| 11 | 1098 | 1383 |
+| 15 | 1084 | 283 |
+| 16 | 542 | 167 |
+| 17 | 1084 | 846 |
+| 18 | 544 | 40 |
+| 19 | 1086 | 234 |
+| 20 | 544 | 139 |
+| 21 | 1086 | 244|
+| 22 | 542 | 131 |
+| 23 | 1084 | 420 |
 
 ## :memo: External articles and links used in the making of this project  
   
@@ -133,10 +144,3 @@ Implemented in `mainTestGraph()` and `mainTestGraphAlg()` accordingly
 ### JFrame
 - https://www.youtube.com/watch?v=4T3WJEH7zrc
 - https://www.youtube.com/watch?v=Kmgo00avvEw
-
-
-## Game Results
-| **Stage**      |    **Moves** | **Grade** |
-|--------------|---------------|-------------|
-| 11 | 1098 | 1383 |
-| 23 | 1084 | 420 |
