@@ -113,8 +113,8 @@ public class Ex2 implements Runnable {
                 e.printStackTrace();
             }
         }
-        System.out.println(_game.toString());
-        System.exit(0);
+       System.out.println(_game.toString());
+       System.exit(0);
     }
 
     /**
@@ -153,10 +153,10 @@ public class Ex2 implements Runnable {
      * The main planning algorithm for playing the game, Capable of handling wide varieties
      * of cases. This algorithm call out the different case handling algorithms according
      * to the agent and pokemon placements on the graph.
-     *
+     * 
      * The main function of this function is to set the next node for each adn every agent
      * on the graph.
-     *
+     * 
      */
     public synchronized static void chooseTargets() {
         for (CL_Agent current_agent : _arena.getAgents()) {
@@ -194,7 +194,7 @@ public class Ex2 implements Runnable {
             //setTimeToSleep(current_agent, dest, graph_game);
         }
     }
-
+  
     public synchronized static void chooseTargetsByProximity() {
         for (CL_Agent current_agent : _arena.getAgents()) {
             int dest = current_agent.getNextNode();
@@ -526,7 +526,7 @@ public class Ex2 implements Runnable {
         List<Double> distances = new ArrayList<>();
         for (node_data node : _game_graph.getV()) {
             for (node_data node2 : _game_graph.getV()) {
-                distances.add(node.getLocation().distance(node2.getLocation()));
+               distances.add(node.getLocation().distance(node2.getLocation()));
             }
         }
         Collections.sort(distances);
