@@ -194,7 +194,7 @@ public class Ex2 implements Runnable {
             //setTimeToSleep(current_agent, dest, graph_game);
         }
     }
-    
+  
     public synchronized static void chooseTargetsByProximity() {
         for (CL_Agent current_agent : _arena.getAgents()) {
             int dest = current_agent.getNextNode();
