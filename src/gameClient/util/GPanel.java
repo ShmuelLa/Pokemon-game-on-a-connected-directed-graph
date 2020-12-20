@@ -1,12 +1,11 @@
 package gameClient.util;
 
-import api.directed_weighted_graph;
-import api.edge_data;
-import api.geo_location;
-import api.node_data;
+import api.*;
 import gameClient.Arena;
 import gameClient.CL_Agent;
 import gameClient.CL_Pokemon;
+import gameClient.Ex2;
+
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
@@ -14,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class GPanel extends JPanel {
+    private game_service game;
     private Gframe frame;
     private Image background;
     private Arena _ar;
@@ -35,6 +35,7 @@ public class GPanel extends JPanel {
         _ar = ar;
         _w2f = s;
         this.frame = frame;
+        frame.setPressed(true);
 
     }
 
@@ -159,6 +160,9 @@ public class GPanel extends JPanel {
                 g2d.setColor(Color.RED);
                 g2d.setFont(new Font("", Font.BOLD, 12));
                 g2d.drawString("" + temp.getID(), (int) (fp.x()*(frame.getRex())), (int) (fp.y()*(frame.getRey())) - (2 * r));
+                g.setColor(Color.BLACK);
+                g.setFont(new Font("Arial",Font.BOLD, 14));
+                g.drawString("Time left : " +(Ex2.getime()/1000),((int)670*(frame.getRex())),((int)15*(frame.getRex())));
             }
         }
     }
@@ -191,5 +195,7 @@ public class GPanel extends JPanel {
             i.printStackTrace();
         }
     }
+
+
 }
 

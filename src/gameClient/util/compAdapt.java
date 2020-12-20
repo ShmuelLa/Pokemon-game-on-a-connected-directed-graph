@@ -20,20 +20,32 @@ public class compAdapt implements ComponentListener {
             float num = (float) frame.getWidth()/width;
             frame.setRex(num);
             frame.repaint();
+            if( ! frame.getPressed()){
+                frame.moved();
+            }
         }else if ( frame.getWidth() < width){
             float num = (float) frame.getWidth()/width;
             frame.setRex(num);
             frame.repaint();
+            if( ! frame.getPressed()){
+                frame.moved();
+            }
         }else frame.setRex(1);
 
         if ( frame.getHeight() > height){
             float num = (float) frame.getHeight() / height;
             frame.setRey(num);
             frame.repaint();
+            if( ! frame.getPressed()){
+                frame.moved();
+            }
         }else if ( frame.getHeight() < height){
             float num = (float) frame.getHeight() /height;
             frame.setRey(num);
             frame.repaint();
+            if( ! frame.getPressed()){
+                frame.moved();
+            }
         }else frame.setRey(1);
 
 
