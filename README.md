@@ -1,14 +1,18 @@
 ![alt text](resources/WikiPictures/redgraph2.gif)
 
-# :mortar_board: Weighted Directed Graph Java Implementation
+# :mortar_board: Pokemon Game on Directed Weighted Graph Java Implementation
 
-An implementation of a Weighted graph in java.  
-This project implements three different interfaces introduced in our assignment:  
+This project is divided into to main components:
+- An implementation of a directed weighted graph which is being used to participate in a Pokemon catching game.
+- The second and main component of this project is the Pokemon catching game. In this game we developed algorithmic artificial intelligence that scans the graph and catches as much pokemons as it cans
   
-- **weighted_graph** (implemented by **WGraph_DS**) - an object representing a graph tha points to all of its containing nodes  
-    - **node_info** (implemented by **NodeInfo**) - an object representing each individual node/vertex in the graph, in this assignment it will be implemented internally  
-- **weighted_graph_algorithms** (implemented by **WGraph_Algo**) - an object that implements some basic graph algorithms  
-  
+### Project structure
+The projects structure includes two main packages:
+- **API** - The main directed weighted graph classes and sources
+- **Game Client** - 
+    - **Util** - 
+    
+   
 - Our main data structure of choice is a **HashMap** that is used to store every node in the graph and also used to 
 implement weighted graph main mechanism, the weighted edges via the **EdgeInfo** object. 
   
@@ -27,21 +31,21 @@ This class implements a mathematical weighted graph by implements two classes in
  Each graph consists of two HashMap data structures. One for the node and the other for the edges.
  Each graph also has an integer that count the edges and the mode count (internal changes count) of the graph
 
-| **Methods**      |    **Details**        | **Complexity** |
-|-----------------|-----------------------|----------------|
+| **Methods**      |    **Details**        |
+|-----------------|-----------------------|
 | `WGraph_DS()` | Default constructor     |
 | `getNode()` | Returns a node by the nodeKey |
-| `hasEdge()` | Checks is two nodes are connected | O(1) |
-| `getEdge()` | Returns the weight of an edge between two nodes | O(1) |
-| `addNode()` | Adds a new node to the graph | O(1) |
-| `connect()` | Connects two nodes in the graph | O(1) |
-| `getV()` | Returns a collection view of the graph | O(1) |
-| `getV(int node_id)` | Returns a collection view of the graph | O(1), Originally O(k). k=node degree |
-| `removeNode()` | Removed a node from the graph | O(n) |
-| `removeEdge()` | Remove an edge between two nodes in the graph | O(1) |
-| `nodeSize()` | Returns the number of the nodes in the graph | O(1) |
-| `edgeSize()` | Returns the number of the edges in the graph | O(1) |
-| `getMC()` | Returns the number of mode counts in the graph, Every change in the internal state of the graph counts as a mode count | O(1) |
+| `hasEdge()` | Checks is two nodes are connected |
+| `getEdge()` | Returns the weight of an edge between two nodes |
+| `addNode()` | Adds a new node to the graph |
+| `connect()` | Connects two nodes in the graph |
+| `getV()` | Returns a collection view of the graph |
+| `getV(int node_id)` | Returns a collection view of the graph |
+| `removeNode()` | Removed a node from the graph |
+| `removeEdge()` | Remove an edge between two nodes in the graph |
+| `nodeSize()` | Returns the number of the nodes in the graph |
+| `edgeSize()` | Returns the number of the edges in the graph |
+| `getMC()` | Returns the number of mode counts in the graph, Every change in the internal state of the graph counts as a mode count |
 | `equals()` | Compares two graphs and cheks if they are equal |
 | `toString()` | Creates a String representing the graph, adds each and every connection |
 
@@ -89,6 +93,7 @@ This class implements a mathematical weighted graph by implements two classes in
 | `save()` | Saves a graph to a file via Serialization |
 | `load()` | Loads a graph from a file via Deserialization |
 | `reset()` | Rests the graph's tag and metadata after running an algorithm |
+### :bar_chart: Graph_Algo
 
 ## :mag: Tests
 
