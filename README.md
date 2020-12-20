@@ -93,7 +93,60 @@ This class implements a mathematical weighted graph by implements two classes in
 | `save()` | Saves a graph to a file via Serialization |
 | `load()` | Loads a graph from a file via Deserialization |
 | `reset()` | Rests the graph's tag and metadata after running an algorithm |
-### :bar_chart: Graph_Algo
+### :bar_chart: Graphics
+
+##### Gframe
+| **Method**      |    **Details** |
+|-----------------|--------------|
+| `updategame()`         | Updates the game arena. |
+| `updateFrame()` |  Called by update game,sets the game. |
+| `initMain()` | Creates and sets the main screen. |
+| `mouseClicked()` | Implements  MouseListener, notifies game of clicking changes. |
+| `mousePressed()` | Implements  MouseListener, notifies game of clicking changes. |
+| `getPressed()` | Returns pressed value. |
+| `getJText` | Returns a JTextField obj. |
+| `setJText()` | Sets JTextField obj. |
+| `setLevel` | Sets level's value. |
+| `getJTextString` | Returns the JTextField's String |
+| `setPressed` | Sets pressed value. |
+| `check()` | Checks the user input.  |
+| `getRex` | Returns Rex (Re-scale x). |
+| `getRey` | Returns Rey (Re-scale y) |
+| `setRex` | Sets Rex (Re-scale x) |
+| `setRey()` | Sets Rey (Re-scale y) |
+| `moved()` | Sets bound of JButton when moved, by Rex and Rey |
+
+##### GPanel
+
+| **Method**      |    **Details** |
+|-----------------|--------------|
+| `update()`         | Updates the game arena. |
+| `updateFrame()` |  Called by update game,sets the game. |
+| `paint()` | Overrides the default. |
+| `mypaint()` | Paints the wanted scene but the state of the game. |
+| `mainmenu()` | Paints the main screen (0) background |
+| `drawGraph()` | Draws the Graph, calling drawnode() and drawedge(). |
+| `drawPokemons` | Draws the pokemons on the graph who is typed 1. |
+| `drawCaterpie()` | Draws the pokemons on the graph who is typed -1. |
+| `drawAgants` | Draws the Agants on the graph. |
+| `drawNode` | Called by drawGraph(), draws the node on the graph |
+| `drawEdge` | Called by drawGraph(), draws the edges on the graph |
+| `drawBackground()` | Draws the background of scene 1.  |
+
+##### myAction
+
+| **Method**      |    **Details** |
+|-----------------|--------------|
+| `keyPressed()`         | Updates the frame level and pressed values when a key is pressed. |
+| `keyReleased()` |  Updates the frame level and pressed values when a key is pressed. |
+| `check()` | If statement to check user input. |
+
+##### compAdapt
+
+| **Method**      |    **Details** |
+|-----------------|--------------|
+| `componentResized()`         | Calculates the re-scale factor for both x and y when the frame is being resized. |
+| `setFrame()` |  Sets the working frame |
 
 ## :mag: Tests
 
