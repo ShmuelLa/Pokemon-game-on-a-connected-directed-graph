@@ -150,7 +150,7 @@ public class Arena {
 
 	/**
 	 * Initializes the game agents form the received Json, This method used for first creating the
-	 * agent's and their corresponding object and will be updated in a seperate method
+	 * agent's and their corresponding object and will be updated in a separate method
 	 *
 	 * @param json Representing the game agents
 	 * @return ArrayList<CL_Agent> Collection on the received agents
@@ -167,7 +167,7 @@ public class Arena {
 	}
 
 	/**
-	 * This method is used to update the game agents during the game from the periodicly
+	 * This method is used to update the game agents during the game from the periodically
 	 * received Json's from the game server. This separation from the initialization
 	 * method is created in order to avoid creating new object every new iteration
 	 *
@@ -305,11 +305,10 @@ public class Arena {
 	 *
 	 * @param graph The current game graph
 	 * @param frame The current game frame
-	 * @return
+	 * @return Ranged frame for the graph drawings
 	 */
 	public static Range2Range w2f(directed_weighted_graph graph, Range2D frame) {
 		Range2D world = GraphRange(graph);
-		Range2Range ans = new Range2Range(world, frame);
-		return ans;
+		return new Range2Range(world, frame);
 	}
 }
