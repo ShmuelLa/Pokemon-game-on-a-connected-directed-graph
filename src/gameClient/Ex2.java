@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import gameClient.util.Gframe;
 import gameClient.util.compAdapt;
-import gameClient.util.myMusic;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -23,21 +22,24 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
  */
 public class Ex2 implements Runnable {
     private static Gframe gframe;
-    private int _scenario;
+    private static Integer _scenario = null;
     private compAdapt adapt;
     private static Arena _arena;
     public static long _sleep_time = 100;
     public static game_service _game;
+    private static int _id;
     public static directed_weighted_graph _game_graph;
     private static final double _proximity_factor = 7;
 
     public synchronized static void main(String[] args) {
+        _id = Integer.parseInt(args[0]);
+        _scenario = Integer.parseInt(args[1]);
         Thread client = new Thread(new Ex2());
         client.start();
     }
 
     /**
-     * An Ex2 Trivial constructor
+     * An Ex2 Trivial constructor used mainly for testing
      *
      */
     public Ex2() {
@@ -54,46 +56,40 @@ public class Ex2 implements Runnable {
     }
 
     /**
-     * When an object implementing interface {@code Runnable} is used
-     * to create a thread, starting the thread causes the object's
-     * {@code run} method to be called in that separately executing
-     * thread.
-     * <p>
-     * The general contract of the method {@code run} is that it may
-     * take any action whatsoever.
+     * The main run function of this thread
+     * Synchronizes all the actions and algorithms of the project
      *
-     * @see Thread#run()
      */
-    // TODO documentation!!!
     @Override
     public synchronized void run() {
-        gframe = new Gframe();
-        adapt = new compAdapt();
-        adapt.setFrame(gframe);
-        gframe.addComponentListener(adapt);
-        gframe.setSize(800, 600);
-        gframe.setResizable(true);
-        gframe.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        gframe.initMain();
-        gframe.show();
-        long fps = 2;
-        while(!gframe.getPressed()) {
-            try {
-                //gframe.repaint();
-                Thread.sleep(fps);
+        if( _scenario ==null) {
+            gframe = new Gframe();
+            adapt = new compAdapt();
+            adapt.setFrame(gframe);
+            gframe.addComponentListener(adapt);
+            gframe.setSize(800, 600);
+            gframe.setResizable(true);
+            gframe.setDefaultCloseOperation(EXIT_ON_CLOSE);
+            gframe.initMain();
+            gframe.show();
+            long fps = 2;
+            while (!gframe.getPressed()) {
+                try {
+                    Thread.sleep(fps);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            catch(Exception e) {
-                e.printStackTrace();
-            }
-
+        }else{
+            gframe = new Gframe();
+            _game = Game_Server_Ex2.getServer(_scenario);
+            init();
+            adapt = new compAdapt();
+            adapt.setFrame(gframe);
+            gframe.setSize(800, 600);
+            gframe.setResizable(true);
+            gframe.addComponentListener(adapt);
         }
-        myMusic song2 = new myMusic(2);
-        this._scenario = Integer.parseInt(gframe.getJTextString());
-        gframe.setVisible(false);
-        gframe.dispose();
-        _game = Game_Server_Ex2.getServer(this._scenario);
-        init();
-        adapt.setFrame(gframe);
         gframe.setTitle("Pokemon Game - Scenario number: "+_scenario);
         gframe.setDefaultCloseOperation(EXIT_ON_CLOSE);
         setAgentsTargetedArea(_arena.getAgents());
@@ -125,7 +121,7 @@ public class Ex2 implements Runnable {
      *
      */
     public synchronized void init() {
-        _game.login(314078023);
+        _game.login(_id);
         _game_graph = Arena.parseGraph(_game.getGraph());
         _arena = new Arena(_game);
         placeAgents();
@@ -431,7 +427,6 @@ public class Ex2 implements Runnable {
             return;
         }
         int nodes_per_arena = (int) Math.ceil(((_game_graph.nodeSize()*1.0) / (agents.size()*1.0)) + 1);
-        System.out.println(nodes_per_arena);
         for (CL_Agent agent : agents) {
             int outer_index = 0;
             int neighbor = 0;
@@ -498,25 +493,6 @@ public class Ex2 implements Runnable {
     }
 
     /**
-     * Checks if this agent has eaten he's target successfully. If not reduces the sleep time
-     *
-     * @param agents The agent to check
-     */
-    public synchronized static void checkIfEaten(List<CL_Agent> agents) {
-        boolean flag = true;
-        for (CL_Agent agent : agents) {
-            if (agent.getCurrentTarget() != null) {
-                if (agent.getCurrentTarget().get_edge().getDest() == agent.getSrcNode()) {
-
-                }
-            }
-        }
-    }
-
-    public synchronized void moreAgentsThanPokemonsMove() {
-    }
-
-    /**
      * Calculates the distances between all the nodes geo_locations
      * in the current graph.
      *
@@ -544,14 +520,13 @@ public class Ex2 implements Runnable {
      */
     public synchronized static void printMoves(CL_Agent current_agent, int src, int dest, CL_Pokemon closest) {
         if (current_agent.get_curr_edge() != null) {
-            System.out.println(current_agent.get_curr_edge().toString() + "  " + closest.get_edge().toString());
-            System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
+            System.out.println(current_agent.toString()+src+" -> "+dest+" Speed "+current_agent.getSpeed());
         }
         else {
-            System.out.println(current_agent.get_curr_edge() + "  " + closest.get_edge().toString());
-            System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
+            System.out.println(current_agent.toString()+src+" -> "+dest+" Speed "+current_agent.getSpeed());
         }
     }
+
     public static long getime(){
         return _game.timeToEnd();
     }
