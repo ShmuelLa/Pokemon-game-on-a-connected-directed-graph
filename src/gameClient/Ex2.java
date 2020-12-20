@@ -27,7 +27,7 @@ public class Ex2 implements Runnable {
     private compAdapt adapt;///
     private static Arena _arena;
     public static long _sleep_time = 100;
-    private static game_service _game;
+    public static game_service _game;
     public static directed_weighted_graph _game_graph;
     private static final double _proximity_factor = 7;
 
@@ -68,18 +68,18 @@ public class Ex2 implements Runnable {
     @Override
     public synchronized void run() {
         gframe = new Gframe();
-        adapt = new compAdapt();/////////////
-        adapt.setFrame(gframe);//////////////
-        gframe.addComponentListener(adapt); //////////
+        adapt = new compAdapt();
+        adapt.setFrame(gframe);
+        gframe.addComponentListener(adapt);
         gframe.setSize(800, 600);
         gframe.setResizable(true);
         gframe.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        gframe.initMain(1,1);
+        gframe.initMain();
         gframe.show();
         long fps = 2;
         while(!gframe.getPressed()) {
             try {
-                gframe.repaint();
+                //gframe.repaint();
                 Thread.sleep(fps);
             }
             catch(Exception e) {
@@ -90,10 +90,12 @@ public class Ex2 implements Runnable {
         myMusic song2 = new myMusic(2);
         this._scenario = Integer.parseInt(gframe.getJTextString());
         gframe.setVisible(false);
-        gframe.dispose();//////
+        gframe.dispose();
         _game = Game_Server_Ex2.getServer(this._scenario);
         init();
+        adapt.setFrame(gframe);////////////// this is new!
         gframe.setTitle("Pokemon Game - Scenario number: "+_scenario);
+        gframe.setDefaultCloseOperation(EXIT_ON_CLOSE);// this is new!!!
         setAgentsTargetedArea(_arena.getAgents());
         _game.startGame();
         int ind = 0;
@@ -127,7 +129,7 @@ public class Ex2 implements Runnable {
         _game_graph = Arena.parseGraph(_game.getGraph());
         _arena = new Arena(_game);
         placeAgents();
-        gframe = new Gframe();
+        gframe = new Gframe(); // changed to 1 and added 2 to builder
         gframe.addComponentListener(adapt);//////
         gframe.setSize(800, 600);
         gframe.updategame(_arena);
