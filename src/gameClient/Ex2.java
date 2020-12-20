@@ -87,8 +87,8 @@ public class Ex2 implements Runnable {
                 e.printStackTrace();
             }
         }
-       System.out.println(game.toString());
-       System.exit(0);
+        System.out.println(game.toString());
+        System.exit(0);
     }
 
     public synchronized void init(game_service game) {
@@ -127,12 +127,12 @@ public class Ex2 implements Runnable {
                             game.chooseNextEdge(current_agent.getID(),dest);
                             current_agent.setNextNode(dest);
                             if (current_agent.get_curr_edge() != null) {
-                               // System.out.println(current_agent.get_curr_edge().toString() + "  " + closest.get_edge().toString());
-                               // System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
+                                // System.out.println(current_agent.get_curr_edge().toString() + "  " + closest.get_edge().toString());
+                                // System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
                             }
                             else {
-                               // System.out.println(current_agent.get_curr_edge() + "  " + closest.get_edge().toString());
-                               // System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
+                                // System.out.println(current_agent.get_curr_edge() + "  " + closest.get_edge().toString());
+                                // System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
                             }
                         }
                     }
@@ -144,12 +144,12 @@ public class Ex2 implements Runnable {
                     game.chooseNextEdge(current_agent.getID(),dest);
                     current_agent.setNextNode(dest);
                     if (current_agent.get_curr_edge() != null) {
-                       // System.out.println(current_agent.get_curr_edge().toString() + "  " + closest.get_edge().toString());
-                       // System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
+                        // System.out.println(current_agent.get_curr_edge().toString() + "  " + closest.get_edge().toString());
+                        // System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
                     }
                     else {
-                       // System.out.println(current_agent.get_curr_edge() + "  " + closest.get_edge().toString());
-                       // System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
+                        // System.out.println(current_agent.get_curr_edge() + "  " + closest.get_edge().toString());
+                        // System.out.println(current_agent.toString()+src+" -> "+dest+" SP "+current_agent.getSpeed());
                     }
                 }
             }
@@ -326,7 +326,7 @@ public class Ex2 implements Runnable {
         }
     }
 }
-    //Brain brain = new Brain();
+//Brain brain = new Brain();
 //        brain.setScenario(scenario);
 //        brain.setGame(game);
 //        brain.run();
