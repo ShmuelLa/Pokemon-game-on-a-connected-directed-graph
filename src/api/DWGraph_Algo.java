@@ -7,6 +7,14 @@ import java.util.*;
 public class DWGraph_Algo implements dw_graph_algorithms {
     directed_weighted_graph _algo_graph = new DWGraph_DS();
 
+    public DWGraph_Algo() {
+        _algo_graph = null;
+    }
+
+    public DWGraph_Algo(directed_weighted_graph graph) {
+        _algo_graph = graph;
+    }
+
     /**
      * Init the graph on which this set of algorithms operates on.
      *

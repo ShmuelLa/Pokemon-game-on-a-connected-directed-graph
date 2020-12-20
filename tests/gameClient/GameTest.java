@@ -241,9 +241,11 @@ class GameTest {
         testGameStarter(11);
         dw_graph_algorithms algo = new DWGraph_Algo();
         algo.init(_graph);
-        for (node_data n : algo.shortestPath(5,1)) {
-            System.out.print(n.getKey() + " ");
+        for (node_data n : algo.shortestPath(2,26)) {
+            System.out.print(n.getKey() + "  ");
         }
+        System.out.println(algo.shortestPath(2,26).get(1).getKey());
+        System.out.println(algo.shortestPath(2,26).size());
 /*        CL_Pokemon poke1 = new CL_Pokemon()
         returnClosestPokemon(_arena.getPokemons(),);*/
     }
@@ -270,5 +272,16 @@ class GameTest {
         assertEquals(pq_pokemon.poll().get_edge().getDest(),6);
     }
 
+    @Test
+    void distanceDivisionTesting() {
+        testGameStarter(11);
+        Ex2 ex2 = new Ex2(11);
+        double maxdis = Ex2.getGraphMaxDistance();
+        for (node_data node : Ex2._game_graph.getV()) {
+            for (node_data node2 : Ex2._game_graph.getV()) {
+                if (node.getLocation().distance(node2.getLocation()) > maxdis) fail();
+            }
+        }
+    }
 }
 

@@ -126,15 +126,6 @@ public class Ex2 implements Runnable {
                             current_agent.setCurrentTarget(next_closest);
                             dest = chooseNextNode(current_agent, next_closest);
                             current_agent.setNextNode(dest);
-                            while (_game_graph.getEdge(src,dest) == null) {
-                                System.out.println("Targeted Case");
-                                System.out.println("Chosen nodes"+src+"  "+dest);
-                                chooseNextNode(current_agent,closest);
-                                System.out.println(_game_graph.toString());
-                                System.out.println(closest.get_edge().toString());
-                                System.out.println(current_agent.getSrcNode());
-                                System.out.println(current_agent.getNextNode());
-                            }
                             _game.chooseNextEdge(current_agent.getID(),dest);
                             if (checkProximityCase(current_agent, pokemons) != null) {
                                 dest = checkProximityCase(current_agent, pokemons).poll().get_edge().getDest();
@@ -151,14 +142,6 @@ public class Ex2 implements Runnable {
                     if (checkProximityCase(current_agent, pokemons) != null) {
                         dest = checkProximityCase(current_agent, pokemons).poll().get_edge().getDest();
                     }
-                    while (_game_graph.getEdge(src,dest) == null) {
-                        System.out.println("Chosen nodes"+src+"  "+dest);
-                        chooseNextNode(current_agent,closest);
-                        System.out.println(_game_graph.toString());
-                        System.out.println(closest.get_edge().toString());
-                        System.out.println(current_agent.getSrcNode());
-                        System.out.println(current_agent.getNextNode());
-                    }
                     _game.chooseNextEdge(current_agent.getID(),dest);
                     printMoves(current_agent, src, dest, closest);
                 }
@@ -168,44 +151,15 @@ public class Ex2 implements Runnable {
     }
 
     public synchronized static int chooseNextNode(CL_Agent agent, CL_Pokemon pokemon) {
-        dw_graph_algorithms graph_algo = new DWGraph_Algo();
-        graph_algo.init(_game_graph);
+        dw_graph_algorithms graph_algo = new DWGraph_Algo(_game_graph);
         List<node_data> poke_path;
-/*        if (agent.get_curr_edge().equals(pokemon.get_edge())) {
-            return agent.get_curr_edge().getDest();
-        }*/
-
-/*        poke_path = graph_algo.shortestPath(agent.getSrcNode(),pokemon.get_edge().getSrc());
+        poke_path = graph_algo.shortestPath(agent.getSrcNode(),pokemon.get_edge().getSrc());
         if (poke_path != null) {
             if (poke_path.size() > 1) {
                 return poke_path.get(1).getKey();
             }
-            //else return poke_path.get(0).getKey();
         }
-        return pokemon.get_edge().getSrc();*/
-
-        if (pokemon.getType() > 0) {
-            int targeted_node = Math.min(pokemon.get_edge().getDest(),pokemon.get_edge().getSrc());
-            poke_path = graph_algo.shortestPath(agent.getSrcNode(),targeted_node);
-            if (poke_path != null) {
-                if (poke_path.size() > 1) {
-                    return poke_path.get(1).getKey();
-                }
-                //else return poke_path.get(0).getKey();
-            }
-            return Math.min(pokemon.get_edge().getDest(),pokemon.get_edge().getSrc());
-        }
-        else {
-            int targeted_node = Math.max(pokemon.get_edge().getDest(),pokemon.get_edge().getSrc());
-            poke_path = graph_algo.shortestPath(agent.getSrcNode(),targeted_node);
-            if (poke_path != null) {
-                if (poke_path.size() > 1) {
-                    return poke_path.get(1).getKey();
-                }
-                //else return poke_path.get(0).getKey();
-            }
-            return Math.max(pokemon.get_edge().getDest(),pokemon.get_edge().getSrc());
-        }
+        return pokemon.get_edge().getSrc();
     }
 
     public synchronized static CL_Pokemon returnClosestPokemon(List<CL_Pokemon> pokemons_arr, CL_Agent agent) {
@@ -390,6 +344,23 @@ public class Ex2 implements Runnable {
                 }
             }
         }
+    }
+
+    /**
+     * Calculates the distances between all the nodes geo_locations
+     * in the current graph.
+     *
+     * @return The highest distance possible between two nodes in the graph
+     */
+    public synchronized static double getGraphMaxDistance() {
+        List<Double> distances = new ArrayList<>();
+        for (node_data node : _game_graph.getV()) {
+            for (node_data node2 : _game_graph.getV()) {
+               distances.add(node.getLocation().distance(node2.getLocation()));
+            }
+        }
+        Collections.sort(distances);
+        return distances.get(distances.size()-1);
     }
 
     public synchronized static void printMoves(CL_Agent current_agent, int src, int dest, CL_Pokemon closest) {

@@ -43,6 +43,8 @@ public class Arena {
 		this._pokemons = initPokemonsFromJson(game.getPokemons());
 		this.updatePokemonEdges();
 		this.updateAgentEdges();
+		this._graph = parseGraph(game.getGraph());
+		Ex2._game_graph = parseGraph(game.getGraph());
 	}
 
 	public void setPokemons(List<CL_Pokemon> pokemons) {
