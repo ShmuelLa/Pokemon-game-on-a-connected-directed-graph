@@ -11,6 +11,7 @@ import com.google.gson.JsonParser;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class CL_Agent {
@@ -202,4 +203,8 @@ public class CL_Agent {
 		public void setLocation(Point3D location) {
 			this._location = location;
 		}
+
+	public boolean equals(CL_Agent compared_agent) {
+		return (this.toJSON() == compared_agent.toJSON());
 	}
+}

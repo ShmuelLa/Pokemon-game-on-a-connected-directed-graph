@@ -3,6 +3,7 @@ package gameClient;
 import Server.Game_Server_Ex2;
 import api.*;
 import com.google.gson.*;
+import gameClient.util.Point3D;
 import org.junit.jupiter.api.Test;
 import static gameClient.Arena.*;
 import java.io.FileWriter;
@@ -276,12 +277,30 @@ class GameTest {
     void distanceDivisionTesting() {
         testGameStarter(11);
         Ex2 ex2 = new Ex2(11);
+        ex2.init();
         double maxdis = Ex2.getGraphMaxDistance();
         for (node_data node : Ex2._game_graph.getV()) {
             for (node_data node2 : Ex2._game_graph.getV()) {
                 if (node.getLocation().distance(node2.getLocation()) > maxdis) fail();
             }
         }
+    }
+
+    @Test
+    void pokemonsAgentEqualityTest() {
+        testGameStarter(11);
+        Point3D location = new Point3D(1,1,1);
+        CL_Agent agent = new CL_Agent(2, 1, 7,_graph);
+        agent.setLocation(location);
+        CL_Agent agent2 = new CL_Agent(2, 1, 7,_graph);
+        agent2.setLocation(location);
+        assertEquals(agent.toJSON(),agent2.toJSON());
+    }
+
+    @Test
+    void stage6() {
+        testGameStarter(6);
+        System.out.println(_game.getPokemons());
     }
 }
 
