@@ -28,51 +28,47 @@ public class Gframe extends JFrame implements MouseListener{
     private myAction actionLis;
     private GPanel main;
     private BufferedImage ball;
-    private float reScaleX = 1;
-    private float reScaleY = 1;
+    private float rex;
+    private float rey;
+    private compAdapt adapt;
 
 
 
     public Gframe(){
         super();
+
     }
     public void updategame(Arena ar) {
         this._ar = ar;
         updateFrame();
     }
     private void updateFrame() {
-        int rx_x = 20;
-        int rx_y = this.getWidth()-50;
-        int ry_x = this.getHeight()-120;
-        int ry_y = 50;
-        System.out.println(reScaleX);
-        Range rx = new Range((int)(rx_x*reScaleX),(int)(rx_y*reScaleY));
-        Range ry = new Range((int)(reScaleX*ry_x),(int)(reScaleY*ry_y));
+        Range rx = new Range(20,this.getWidth()-50);
+        Range ry = new Range(this.getHeight()-120,50);
 
         Range2D frame = new Range2D(rx,ry);
         directed_weighted_graph g = _ar.getGraph();
         _w2f = Arena.w2f(g,frame);
-        GPanel main = new GPanel(_ar,_w2f);
+        GPanel main = new GPanel(_ar,_w2f,this);
         main.setSize(800,600);
         setLayout(new BorderLayout());
         add(main);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        this.addComponentListener(adapt);
     }
-    public void initMain(float reScaleX,float reScaleY){
-        main = new GPanel();
-        main.setSize((int)(800*reScaleX),(int)(600*reScaleY));
-        setLayout(null);
+
+    public void initMain(){
+        main = new GPanel(this);
+        main.setSize(800,600);
+        setLayout(new BorderLayout(0,0));
         actionLis = new myAction(this);
         text = new JTextField(10);
         button = new JButton();
 
-
-
         Color c = new Color(248,232,248);
         setBackground(c);
         button.setBackground(c);
-
-        button.setBounds((int)(370*reScaleX), (int)(495*reScaleY), 60, 60);
+        button.setBounds(370, 495, 60, 60);
         try{
             File file = new File("resources/pokeball1.png");
             ball = ImageIO.read(file);
@@ -84,21 +80,18 @@ public class Gframe extends JFrame implements MouseListener{
             e.printStackTrace();
         }
         //Enter a Level
-        text.setText("12");
+        text.setText("11");
         text.setFont(new Font("Arial", Font.PLAIN, 14));
-        text.setBounds((int)(50*reScaleX), (int)(50*reScaleY), 100, 25);
+        text.setBounds(50, 50, 100, 25);
         text.addMouseListener(this);
         text.addKeyListener(actionLis);
 
         button.addMouseListener(this);
         button.addKeyListener(actionLis);
 
-
         add(button);
         add(text);
         add(main);
-
-
     }
 
     @Override
@@ -157,12 +150,6 @@ public class Gframe extends JFrame implements MouseListener{
         }
         return false;
     }
-    public void setReScaleX(float reScaleX) {
-        this.reScaleX = reScaleX;
-    }
-    public void setReScaleY(float reScaleY) {
-        this.reScaleY = reScaleY;
-    }
 
     @Override
     public void mouseReleased(MouseEvent e) {
@@ -176,8 +163,21 @@ public class Gframe extends JFrame implements MouseListener{
     public void mouseExited(MouseEvent e) {
 
     }
-    public GPanel getMain() {
-        return main;
+
+    public float getRex() {
+        return rex;
+    }
+
+    public float getRey() {
+        return rey;
+    }
+
+    public void setRex(float rex) {
+        this.rex = rex;
+    }
+
+    public void setRey(float rey) {
+        this.rey = rey;
     }
 }
 

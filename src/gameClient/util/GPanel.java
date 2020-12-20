@@ -14,24 +14,27 @@ import java.util.Iterator;
 import java.util.List;
 
 public class GPanel extends JPanel {
+    private Gframe frame;
     private Image background;
     private Arena _ar;
     private Range2Range _w2f;
     private Image gary;
     private Image pikachu;
     private Image caterpie;
-    private float reScaleX =1;
-    private float reScaleY =1;
+    private float rex =1;
+    private float rey =1;
     private int state;
 
-    public GPanel() {
+    public GPanel(Gframe frame) {
         state = 0;
+        this.frame = frame;
     }
 
-    public GPanel(Arena ar, Range2Range s) {
+    public GPanel(Arena ar, Range2Range s,Gframe frame) {
         state = 1;
         _ar = ar;
         _w2f = s;
+        this.frame = frame;
 
     }
 
@@ -41,12 +44,8 @@ public class GPanel extends JPanel {
     }
 
     private void updateFrame() {
-        int rx_x = 20;
-        int rx_y = this.getWidth()-50;
-        int ry_x = this.getHeight()-120;
-        int ry_y = 50;
-        Range rx = new Range((int)(rx_x*reScaleX),(int)(rx_y*reScaleY));
-        Range ry = new Range((int)(reScaleX*ry_x),(int)(reScaleY*ry_y));
+        Range rx = new Range( 20,this.getWidth()-50);
+        Range ry = new Range(this.getHeight()-120,50);
         Range2D frame = new Range2D(rx, ry);
         directed_weighted_graph g = _ar.getGraph();
         _w2f = Arena.w2f(g, frame);
@@ -55,15 +54,14 @@ public class GPanel extends JPanel {
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         mypaint(g2d);
-
     }
+
     public void mypaint(Graphics2D g2d){
         if (state == 1) {
             drawBackground(g2d);
             drawGraph(g2d);
             drawPokemons(g2d);
             drawAgants(g2d);
-            drawInfo(g2d);
         } else if (state == 0) {
             mainmenu(g2d);
         }
@@ -77,15 +75,6 @@ public class GPanel extends JPanel {
             i.printStackTrace();
         }
         g.drawImage(background, 0, 0,this.getWidth(),this.getHeight(), this);
-    }
-
-    private void drawInfo(Graphics2D g) {
-        List<String> str = _ar.get_info();
-        String dt = "none";
-        for (int i = 0; i < str.size(); i++) {
-            g.drawString(str.get(i) + " dt: " + dt, 100, 60 + i * 20);
-        }
-
     }
 
     private void drawGraph(Graphics2D g) {
@@ -122,7 +111,7 @@ public class GPanel extends JPanel {
                         e.printStackTrace();
                     }
                     geo_location fp = this._w2f.world2frame(c);
-                    g.drawImage(pikachu, (int) fp.x() - r, (int) fp.y() - r, 2 * r, 2 * r, this);
+                    g.drawImage(pikachu, (int) (fp.x() - r*(frame.getRex())), (int)(fp.y() - r*(frame.getRey())), 2 * r, 2 * r, this);
                     g2d.setColor(Color.black);
                     g2d.setFont(new Font("", Font.BOLD, 12));
                     g2d.drawString("" + f.getValue(), (int) fp.x(), (int) fp.y() - r);
@@ -142,10 +131,10 @@ public class GPanel extends JPanel {
         Point3D point = pokemon.getLocation();
         geo_location fp = this._w2f.world2frame(point);
         int r = 15;
-        g.drawImage(caterpie, (int) fp.x() - r, (int) fp.y() - r, 2 * r, 2 * r, this);
+        g.drawImage(caterpie, (int) (fp.x() - r*(frame.getRex())), (int) (fp.y() - r*(frame.getRey())), 2 * r, 2 * r, this);
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font("", Font.BOLD, 12));
-        g2d.drawString("" + pokemon.getValue(), (int) fp.x(), (int) fp.y() - r);
+        g2d.drawString("" + pokemon.getValue(), (int) (fp.x()*(frame.getRex())), (int) (fp.y()*(frame.getRey())));
     }
 
     private void drawAgants(Graphics2D g) {
@@ -166,10 +155,10 @@ public class GPanel extends JPanel {
             if (c != null) {
 
                 geo_location fp = this._w2f.world2frame(c);
-                g.drawImage(gary, (int) fp.x() - r, (int) fp.y() - r, 2 * r, 2 * r, this);
+                g.drawImage(gary, (int) (fp.x() - r*(frame.getRex())), (int) (fp.y() - r*(frame.getRey())), 2 * r, 2 * r, this);
                 g2d.setColor(Color.RED);
                 g2d.setFont(new Font("", Font.BOLD, 12));
-                g2d.drawString("" + temp.getID(), (int) fp.x(), (int) fp.y() - (2 * r));
+                g2d.drawString("" + temp.getID(), (int) (fp.x()*(frame.getRex())), (int) (fp.y()*(frame.getRey())) - (2 * r));
             }
         }
     }
@@ -177,8 +166,9 @@ public class GPanel extends JPanel {
     private void drawNode(node_data n, int r, Graphics2D g) {
         geo_location pos = n.getLocation();
         geo_location fp = this._w2f.world2frame(pos);
-        g.fillOval((int) fp.x() - r, (int) fp.y() - r, 2 * r, 2 * r);
-        g.drawString("" + n.getKey(), (int) fp.x(), (int) fp.y() - 4 * r);
+        g.fillOval((int) (fp.x() - r*(frame.getRex())), (int) (fp.y() - r*(frame.getRey())), 2 * r, 2 * r);
+        g.drawString("" + n.getKey(), (int) (fp.x()*(frame.getRex())), (int) (fp.y()*(frame.getRey())) - 4 * r);
+        System.out.println(frame.getRex());
     }
 
     private void drawEdge(edge_data e, Graphics2D g) {
@@ -189,7 +179,7 @@ public class GPanel extends JPanel {
         geo_location d0 = this._w2f.world2frame(d);
         g.setColor(new Color(13, 13, 13));
         g.setStroke(new BasicStroke(2));
-        g.drawLine((int) s0.x(), (int) s0.y(), (int) d0.x(), (int) d0.y());
+        g.drawLine((int) (s0.x()*frame.getRex()) , (int)(s0.y()*frame.getRey()), (int) (d0.x()*frame.getRex()), (int) (d0.y()*frame.getRey()));
     }
 
     private void drawBackground(Graphics2D g) {
@@ -202,6 +192,5 @@ public class GPanel extends JPanel {
             i.printStackTrace();
         }
     }
-
 }
 

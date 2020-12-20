@@ -8,7 +8,6 @@ import gameClient.util.Gframe;
 import gameClient.util.compAdapt;
 import gameClient.util.myMusic;
 
-import javax.swing.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -16,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class Ex2 implements Runnable {
-    private static Gframe gframe;
+    private static Gframe gframe; //
     private int scenario;
     private compAdapt adapt;
     private static Arena _ar;
@@ -41,19 +40,19 @@ public class Ex2 implements Runnable {
      */
     @Override
     public void run() {
-        gframe = new Gframe();
+        gframe = new Gframe(); // changed to frame1, and added 1 to builder
         adapt = new compAdapt();/////////////
         adapt.setFrame(gframe);//////////////
         gframe.addComponentListener(adapt); //////////
         gframe.setSize(800, 600);
         gframe.setResizable(true);
         gframe.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        gframe.initMain(1,1);
+        gframe.initMain(); // removed (1,1)
         gframe.show();
         long fps = 2;
         while(!gframe.getPressed()) {
             try {
-                gframe.repaint();
+                //gframe.repaint();
                 Thread.sleep(fps);
             }
             catch(Exception e) {
@@ -67,7 +66,9 @@ public class Ex2 implements Runnable {
         gframe.dispose();//////
         game_service game = Game_Server_Ex2.getServer(this.scenario);
         init(game);
+        adapt.setFrame(gframe);////////////// this is new!
         gframe.setTitle("Pokemon Game - Scenario number: "+scenario);
+        gframe.setDefaultCloseOperation(EXIT_ON_CLOSE);// this is new!!!
         setAgentsTargetedArea(_ar.getAgents(),_ar.getGraph());
         game.startGame();
         int ind = 0;
@@ -94,7 +95,7 @@ public class Ex2 implements Runnable {
         this._game_graph = Arena.parseGraph(game.getGraph());
         _ar = new Arena(game);
         placeAgents(game);
-        gframe = new Gframe();
+        gframe = new Gframe(); // changed to 1 and added 2 to builder
         gframe.addComponentListener(adapt);//////
         gframe.setSize(800, 600);
         gframe.updategame(_ar);
