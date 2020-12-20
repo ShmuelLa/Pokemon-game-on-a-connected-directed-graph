@@ -106,6 +106,7 @@ Implemented in `mainTestGraph()` and `mainTestGraphAlg()` accordingly
 | **Stage** | **Moves** | **Grade** |
 |-----------|-----------|-----------|
 | 11 | 1098 | 1383 |
+| 14 | 528 | 139 |
 | 15 | 1084 | 283 |
 | 16 | 542 | 167 |
 | 17 | 1084 | 846 |

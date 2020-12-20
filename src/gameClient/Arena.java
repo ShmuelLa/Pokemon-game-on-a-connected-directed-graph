@@ -5,13 +5,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import gameClient.util.Point3D;
 import gameClient.util.Range;
 import gameClient.util.Range2D;
 import gameClient.util.Range2Range;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,9 +26,6 @@ public class Arena {
 	private directed_weighted_graph _graph;
 	private List<CL_Agent> _agents;
 	private List<CL_Pokemon> _pokemons;
-	private List<String> _info;
-	private static Point3D MIN = new Point3D(0, 100,0);
-	private static Point3D MAX = new Point3D(0, 100,0);
 
 	/**
 	 * The main arena constructor, receives a game JSon representing all the different components
@@ -42,7 +35,6 @@ public class Arena {
 	 * @param game Json representing the game status, received from the game server
 	 */
 	public Arena(game_service game) {
-		this._info = new ArrayList<String>();
 		this._graph = parseGraph(game.getGraph());
 		this._agents = new ArrayList<>();
 		this._pokemons = Arena.initPokemonsFromJson(game.getPokemons());
@@ -111,14 +103,6 @@ public class Arena {
 		return this._graph;
 	}
 
-	public List<String> get_info() {
-		return this._info;
-	}
-
-	public void set_info(List<String> _info) {
-		this._info = _info;
-	}
-
 	/**
 	 * Creates a graph directly from a received json String
 	 * Used based on the graph_algo and used for loading a graph
@@ -155,10 +139,22 @@ public class Arena {
 		return result;
 	}
 
+	/**
+	 * Returns a collection of the agents
+	 *
+	 * @return List<CL_Agent> of all the game agents
+	 */
 	public List<CL_Agent> getAgents() {
 		return _agents;
 	}
 
+	/**
+	 * Initializes the game agents form the received Json, This method used for first creating the
+	 * agent's and their corresponding object and will be updated in a seperate method
+	 *
+	 * @param json Representing the game agents
+	 * @return ArrayList<CL_Agent> Collection on the received agents
+	 */
 	public static ArrayList<CL_Agent> initAgentsFromJson(String json) {
 		ArrayList<CL_Agent> result = new ArrayList<>();
 		JsonObject agents_obj = JsonParser.parseString(json).getAsJsonObject();
@@ -170,6 +166,13 @@ public class Arena {
 		return result;
 	}
 
+	/**
+	 * This method is used to update the game agents during the game from the periodicly
+	 * received Json's from the game server. This separation from the initialization
+	 * method is created in order to avoid creating new object every new iteration
+	 *
+	 * @param json Representing the game agents
+	 */
 	public void updateAgentsFromJson(String json) {
 		JsonObject agents_obj = JsonParser.parseString(json).getAsJsonObject();
 		JsonArray J_obj = agents_obj.getAsJsonArray("Agents");
@@ -184,20 +187,13 @@ public class Arena {
 		}
 	}
 
-/*	public void updatePokemonsFromJson(String json) {
-		JsonObject agents_obj = JsonParser.parseString(json).getAsJsonObject();
-		JsonArray J_obj = agents_obj.getAsJsonArray("Pokemons");
-		for (CL_Pokemon pokemon : this._pokemons) {
-			for (JsonElement json_agent : J_obj) {
-				JsonObject json_agent_obj = json_agent.getAsJsonObject();
-				if (json_agent_obj.getAsJsonObject("Pokemon").get("id").getAsInt() == agent.getID()) {
-					pokemon.update(json_agent_obj);
-				}
-			}
-			agent.setCurrentEdge(this._graph.getEdge(agent.getSrcNode(),agent.getNextNode()));
-		}
-	}*/
-
+	/**
+	 * Initializes the game pokemons from the received Json from the game server
+	 * This method is used to create and store the new Pokemon objects
+	 *
+	 * @param json Representing the game pokemons
+	 * @return ArrayList<CL_Pokemon> collection of the game pokemons
+	 */
 	public static ArrayList<CL_Pokemon> initPokemonsFromJson(String json) {
 		ArrayList<CL_Pokemon> result = new ArrayList<>();
 		JsonObject pokemons_obj = JsonParser.parseString(json).getAsJsonObject();
@@ -209,10 +205,18 @@ public class Arena {
 		return result;
 	}
 
-	public static void updateEdge(CL_Pokemon pokemon, directed_weighted_graph g) {
-		for (node_data n : g.getV()) {
-			for (edge_data e : g.getE(n.getKey())) {
-				boolean found = isOnEdge(e, pokemon, g);
+	/**
+	 * Scans the graph to find the specific edge of the received pokemon.
+	 * This method uses another method that checks validity of the pokemon time and the right
+	 * relation to the edge's nodes
+	 *
+	 * @param pokemon The scanned pokemon
+	 * @param graph directed_weighted_graph of the current game graph
+	 */
+	public static void updateEdge(CL_Pokemon pokemon, directed_weighted_graph graph) {
+		for (node_data n : graph.getV()) {
+			for (edge_data e : graph.getE(n.getKey())) {
+				boolean found = isOnEdge(e, pokemon, graph);
 				if(found) {
 					pokemon.set_edge(e);
 				}
@@ -220,18 +224,39 @@ public class Arena {
 		}
 	}
 
+	/**
+	 * Uses the update edge method for iterating over all the game pokemons
+	 * and updating all their edges. This method will be called in each iteration in order to
+	 * detect every change in the server during the game
+	 *
+	 */
 	public void updatePokemonEdges() {
 		for(int i = 0; i < this._pokemons.size(); i++) {
 			Arena.updateEdge(this._pokemons.get(i), this._graph);
 		}
 	}
 
+	/**
+	 * Update all the agents edges on the graph, like all the similar method
+	 * this method is called in every update iteration in order
+	 * to keep track on every change in the game state
+	 *
+	 */
 	public void updateAgentEdges() {
 		for (CL_Agent agent : this._agents) {
 			agent.setCurrentEdge(this._graph.getEdge(agent.getSrcNode(),agent.getNextNode()));
 		}
 	}
 
+	/**
+	 * Checks if a specific pokemon is located on a specific edge,
+	 * this method is used in every pokemon scanning method and algorithm
+	 *
+	 * @param edge The edge to check for the pokemon
+	 * @param pokemon The searched pokemon
+	 * @param graph The current game graph
+	 * @return True if the pokemon is on the received edge, false otherwise
+	 */
 	public static boolean isOnEdge(edge_data edge, CL_Pokemon pokemon, directed_weighted_graph graph) {
 		int src = edge.getSrc();
 		int dest = edge.getDest();
@@ -244,8 +269,15 @@ public class Arena {
 		return distance > d1 - EPS;
 	}
 
-	private static Range2D GraphRange(directed_weighted_graph g) {
-		Iterator<node_data> itr = g.getV().iterator();
+	/**
+	 * Receives a graph and returns the two dimensional range for it
+	 * This method is used mainly for drawing the graph on the frame
+	 *
+	 * @param graph The current game graph
+	 * @return the two dimensional range of the graph
+	 */
+	private static Range2D GraphRange(directed_weighted_graph graph) {
+		Iterator<node_data> itr = graph.getV().iterator();
 		double x0=0,x1=0,y0=0,y1=0;
 		boolean first = true;
 		while(itr.hasNext()) {
@@ -267,8 +299,16 @@ public class Arena {
 		return new Range2D(xr,yr);
 	}
 
-	public static Range2Range w2f(directed_weighted_graph g, Range2D frame) {
-		Range2D world = GraphRange(g);
+	/**
+	 * Converts the two dimensional coordinates to frame coordinates. This method is used
+	 * mainly for drawing the graph and in all the Frame methods
+	 *
+	 * @param graph The current game graph
+	 * @param frame The current game frame
+	 * @return
+	 */
+	public static Range2Range w2f(directed_weighted_graph graph, Range2D frame) {
+		Range2D world = GraphRange(graph);
 		Range2Range ans = new Range2Range(world, frame);
 		return ans;
 	}
