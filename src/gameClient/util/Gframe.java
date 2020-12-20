@@ -11,7 +11,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-
+/**
+ * This class is a our representation for JFrame, we used some of its core mechanics , use Images, BufferedImages,
+ * for the background of the game and its components background, each Frame has a state (0 or 1) representing what
+ * status the game is. we use an ActionListener, a ComponentListener , a KeyListener and as well as
+ * this class itself implements MouseListener
+ * to make the game more interactive and easy to use.
+ * @author gidon.avziz & shmuel.lavian
+ */
 
 public class Gframe extends JFrame implements MouseListener{
     private Arena _ar;
@@ -29,7 +36,7 @@ public class Gframe extends JFrame implements MouseListener{
 
 
     /**
-     * basic builder from custom JFrame, calling super() method to set defaults.
+     * basic constructor from custom JFrame, calling super() method to set defaults.
      */
     public Gframe(){
         super();
@@ -103,7 +110,11 @@ public class Gframe extends JFrame implements MouseListener{
     }
 
     /**
-     * this class implements MouseListener, this is the implantation of it.
+     * this class implements MouseListener, this is the implantation of it. basically we check the input
+     * given by the user into the game, we make it a bit "easier" for the testing by reseting the text field
+     * when click and setting it back to the original state the input is invalid.
+     * this method is for clicking the JTextField and the JButton, when clicked and the repercussions of it
+     * (making sure the input is valid).
      * @param e
      */
     @Override
@@ -121,6 +132,12 @@ public class Gframe extends JFrame implements MouseListener{
             }
         }
     }
+
+    /**
+     *this method is similar for the previous one, with one difference , this method checks if a
+     * component is pressed not clicked. (longer time period)
+     * @param e
+     */
     @Override
     public void mousePressed(MouseEvent e) {
         if( e.getSource() == text){
@@ -139,6 +156,10 @@ public class Gframe extends JFrame implements MouseListener{
         }
     }
 
+    /**
+     * blank because there is no use for this methods.
+     * @param e
+     */
     @Override
     public void mouseReleased(MouseEvent e) {
 
@@ -154,26 +175,61 @@ public class Gframe extends JFrame implements MouseListener{
 
     }
 
+    /**
+     * simpler getter for a boolean named pressed (representing the game status)
+     * @return
+     */
     public boolean getPressed(){
         return pressed;
     }
+
+    /**
+     * simple getter for the JTextField.
+     * @return
+     */
     public JTextField getJText() {
         return text;
     }
+
+    /**
+     * simple setter for the JTextField.
+     * @param t
+     */
     public void setJText(String t) {
         text.setText(t);
     }
+
+    /**
+     * simple setter for the String name level (the name is a given).
+     * @param level
+     */
     public void setLevel(String level) {
         this.level = level;
     }
+
+    /**
+     * the method returns the actual String that was inserted into the JTextField.
+     * @return
+     */
     public String getJTextString() {
         return text.getText();
     }
+
+    /**
+     * the method sets the Frame status , mainly for inside purposes.
+     * @param pressed
+     */
     public void setPressed(boolean pressed) {
         this.pressed = pressed;
     }
-    private boolean check(String string){
 
+    /**
+     * A boolean check, this is reused so for convince purposes we made a method.
+     * this checks the input in to the JTextField is valid, for further uses.
+     * @param string
+     * @return
+     */
+    private boolean check(String string){
         if((string.matches("[0-9]+") ||
                 string.matches("[0-9]-") || string.contains("-"))){
             return true;
@@ -182,22 +238,38 @@ public class Gframe extends JFrame implements MouseListener{
 
     }
 
-
+    /**
+     * this method returns the X axis scale factor to be use within the game(when resized).
+     * @return
+     */
     public float getRex() {
         return rex;
     }
-
+    /**
+     * this method returns the Y axis scale factor to be use within the game(when resized).
+     * @return
+     */
     public float getRey() {
         return rey;
     }
-
+    /**
+     * this method sets the X axis scale factor to be use within the game(when resized).
+     * @return
+     */
     public void setRex(float rex) {
         this.rex = rex;
     }
-
+    /**
+     * this method sets the Y axis scale factor to be use within the game(when resized).
+     * @return
+     */
     public void setRey(float rey) {
         this.rey = rey;
     }
+
+    /**
+     * the method is for re-positioning the JButton when resizing the screen, using the rescale factors.
+     */
     public void moved(){
         button.setBounds((int)(370*rex), (int)(497*rey), 60, 60);
     }
