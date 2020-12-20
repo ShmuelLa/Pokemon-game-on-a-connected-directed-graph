@@ -16,10 +16,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+
 /**
- * This class represents a multi Agents Arena which move on a graph - grabs Pokemon's and avoid the Zombies.
- * @author boaz.benmoshe
+ * This class represents a multi agent arena it is the main parsing and updating component
+ * for all the game information during playtime. Ech and every stage is parsed by methods here
+ * by receiving different Json objects from the game server.
+ * The update occurs before every target choosing in the game.
  *
+ * @author gison.avziz & shmuel.lavian
  */
 public class Arena {
 	public static final double EPS = 0.001*0.001;
@@ -30,6 +34,13 @@ public class Arena {
 	private static Point3D MIN = new Point3D(0, 100,0);
 	private static Point3D MAX = new Point3D(0, 100,0);
 
+	/**
+	 * The main arena constructor, receives a game JSon representing all the different components
+	 * of a game from the server and parses each and every one of them individual in to the
+	 * relevant object
+	 *
+	 * @param game Json representing the game status, received from the game server
+	 */
 	public Arena(game_service game) {
 		this._info = new ArrayList<String>();
 		this._graph = parseGraph(game.getGraph());
@@ -38,6 +49,12 @@ public class Arena {
 		this.updatePokemonEdges();
 	}
 
+	/**
+	 * Updates all the fields in the arena from the same Json object
+	 * This method is crucial for handling ongoing changes in the game
+	 *
+	 * @param game Json representing the game status, received from the game server
+	 */
 	public void updateArena(game_service game) {
 		this.updateAgentsFromJson(game.getAgents());
 		this._pokemons = initPokemonsFromJson(game.getPokemons());
@@ -47,39 +64,49 @@ public class Arena {
 		Ex2._game_graph = parseGraph(game.getGraph());
 	}
 
+	/**
+	 * Sets the pokemon List of the arena, This method is used mainly for testing
+	 * due to being processed mid game via the update method above
+	 *
+	 * @param pokemons List<CL_Pokemon> representing the game pokemons
+	 */
 	public void setPokemons(List<CL_Pokemon> pokemons) {
 		this._pokemons = pokemons;
 	}
 
+	/**
+	 * Sets the agents List of the arena, This method is used mainly for testing
+	 * due to being processed mid game via the update method above
+	 *
+	 * @param agents List<CL_Agent> representing the game agents
+	 */
 	public void setAgents(List<CL_Agent> agents) {
 		this._agents = agents;
 	}
 
-	public void setGraph(directed_weighted_graph g) {
-		this._graph =g;
+	/**
+	 * Sets the graph of this arena
+	 *
+	 * @param graph directed_weighted_graph of this Arena's game
+	 */
+	public void setGraph(directed_weighted_graph graph) {
+		this._graph = graph;
 	}
 
-	private void init( ) {
-		MIN=null; MAX=null;
-		double x0=0,x1=0,y0=0,y1=0;
-		Iterator<node_data> iter = this._graph.getV().iterator();
-		while(iter.hasNext()) {
-			geo_location c = iter.next().getLocation();
-			if(MIN==null) {x0 = c.x(); y0=c.y(); x1=x0;y1=y0;MIN = new Point3D(x0,y0);}
-			if(c.x() < x0) {x0=c.x();}
-			if(c.y() < y0) {y0=c.y();}
-			if(c.x() > x1) {x1=c.x();}
-			if(c.y() > y1) {y1=c.y();}
-		}
-		double dx = x1-x0, dy = y1-y0;
-		MIN = new Point3D(x0-dx/10,y0-dy/10);
-		MAX = new Point3D(x1+dx/10,y1+dy/10);
-	}
-
+	/**
+	 * Returns this games pokemons
+	 *
+	 * @return List<CL_Pokemon> of the game's pokemons
+	 */
 	public List<CL_Pokemon> getPokemons() {
 		return _pokemons;
 	}
-	
+
+	/**
+	 * Returns this games graph
+	 *
+	 * @return directed_weighted_graph of the game's graph
+	 */
 	public directed_weighted_graph getGraph() {
 		return this._graph;
 	}
@@ -216,37 +243,6 @@ public class Arena {
 				+ pokemon.getLocation().distance(graph.getNode(dest).getLocation());
 		return distance > d1 - EPS;
 	}
-
-/*	public static edge_data getPokemonEdge(CL_Pokemon pokemon, directed_weighted_graph g) {
-		Iterator<node_data> itr = g.getV().iterator();
-		edge_data result = new EdgeData();
-		while(itr.hasNext()) {
-			node_data v = itr.next();
-			Iterator<edge_data> iter = g.getE(v.getKey()).iterator();
-			while(iter.hasNext()) {
-				edge_data e = iter.next();
-				boolean found = isOnEdge(e, pokemon, g);
-				if(found) {
-					pokemon.set_edge(e);
-					return e;
-				}
-			}
-		}
-		return result;
-	}*/
-
-/*	public static boolean isOnEdge(geo_location pos, edge_data edge, int type, directed_weighted_graph graph) {
-		int src = edge.getSrc();
-		int dest = edge.getDest();
-		if ((type < 0 && dest > src) || (type > 0 && src > dest)) {
-			return false;
-		}
-		geo_location src_pos = graph.getNode(src).getLocation();
-		geo_location dest_pos = graph.getNode(dest).getLocation();
-		double distance = src_pos.distance(dest_pos);
-		double d1 = src_pos.distance(pos) + pos.distance(dest_pos);
-		return distance > d1 - EPS;
-	}*/
 
 	private static Range2D GraphRange(directed_weighted_graph g) {
 		Iterator<node_data> itr = g.getV().iterator();
