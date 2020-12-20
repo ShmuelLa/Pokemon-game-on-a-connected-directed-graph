@@ -1,4 +1,4 @@
-![alt text](resources/WikiPictures/redgraph2.gif)
+![alt text](resources/logo.png)
 
 # :mortar_board: Pokemon Game on Directed Weighted Graph Java Implementation
 
@@ -9,8 +9,8 @@ This project is divided into to main components:
 ### Project structure
 The projects structure includes two main packages:
 - **API** - The main directed weighted graph classes and sources
-- **Game Client** - 
-    - **Util** - 
+- **Game Client** - The main game component contains all the algorithms and objects for playing the game
+    - **Util** - Utilities for the whole projects most of them are use for painting and claulating
     
    
 - Our main data structure of choice is a **HashMap** that is used to store every node in the graph and also used to 
