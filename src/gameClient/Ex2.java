@@ -10,12 +10,14 @@ import gameClient.util.myMusic;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static java.lang.Thread.sleep;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 /**
  * The main algorithmic class of the project. This class contains and manages the whole project by
  * relying on the Arena class. First we initialize a game with a specific scenario and than
- * each and every step in the game is planned by the rules and funtions in that class.
+ * each and every step in the game is planned by the rules and functions in that class.
  *
  * @author gison.avziz & shmuel.lavian
  */
@@ -24,7 +26,7 @@ public class Ex2 implements Runnable {
     private int _scenario;
     private compAdapt adapt;///
     private static Arena _arena;
-    public static long _sleep_time = 20;
+    public static long _sleep_time = 100;
     private static game_service _game;
     public static directed_weighted_graph _game_graph;
     private static final double _proximity_factor = 7;
@@ -62,6 +64,7 @@ public class Ex2 implements Runnable {
      *
      * @see Thread#run()
      */
+    // TODO documentation!!!
     @Override
     public synchronized void run() {
         gframe = new Gframe();
@@ -99,7 +102,7 @@ public class Ex2 implements Runnable {
                 moveAgents();
                 _game.move();
                 if(ind % 1==0) {
-                    Thread.sleep(_sleep_time);
+                    sleep(_sleep_time);
                     gframe.repaint();
                     ind++;
                 }
@@ -120,6 +123,7 @@ public class Ex2 implements Runnable {
      *
      */
     public synchronized void init() {
+        _game.login(314078023);
         _game_graph = Arena.parseGraph(_game.getGraph());
         _arena = new Arena(_game);
         placeAgents();
@@ -167,7 +171,7 @@ public class Ex2 implements Runnable {
                             current_agent.setNextNode(dest);
                             _game.chooseNextEdge(current_agent.getID(),dest);
                             if (checkProximityCase(current_agent) != null) {
-                                dest = checkProximityCase(current_agent).poll().get_edge().getDest();
+                                dest = Objects.requireNonNull(Objects.requireNonNull(checkProximityCase(current_agent)).poll()).get_edge().getDest();
                             }
                             printMoves(current_agent, src, dest, closest);
                         }
@@ -179,7 +183,7 @@ public class Ex2 implements Runnable {
                     dest = chooseNextNode(current_agent, closest);
                     current_agent.setNextNode(dest);
                     if (checkProximityCase(current_agent) != null) {
-                        dest = checkProximityCase(current_agent).poll().get_edge().getDest();
+                        dest = Objects.requireNonNull(checkProximityCase(current_agent).poll()).get_edge().getDest();
                     }
                     _game.chooseNextEdge(current_agent.getID(),dest);
                     printMoves(current_agent, src, dest, closest);
@@ -203,7 +207,7 @@ public class Ex2 implements Runnable {
                             dest = chooseNextNode(current_agent, next_closest);
                             current_agent.setNextNode(dest);
                             if (checkProximityCase(current_agent) != null) {
-                                dest = checkProximityCase(current_agent).poll().get_edge().getDest();
+                                dest = Objects.requireNonNull(Objects.requireNonNull(checkProximityCase(current_agent)).poll()).get_edge().getDest();
                             }
                             _game.chooseNextEdge(current_agent.getID(),dest);
                             printMoves(current_agent, src, dest, closest);
@@ -216,7 +220,7 @@ public class Ex2 implements Runnable {
                     dest = chooseNextNode(current_agent, closest);
                     current_agent.setNextNode(dest);
                     if (checkProximityCase(current_agent) != null) {
-                        dest = checkProximityCase(current_agent).poll().get_edge().getDest();
+                        dest = Objects.requireNonNull(Objects.requireNonNull(checkProximityCase(current_agent)).poll()).get_edge().getDest();
                     }
                     _game.chooseNextEdge(current_agent.getID(),dest);
                     printMoves(current_agent, src, dest, closest);
@@ -229,7 +233,7 @@ public class Ex2 implements Runnable {
                             dest = chooseNextNode(current_agent, next_closest);
                             current_agent.setNextNode(dest);
                             if (checkProximityCase(current_agent) != null) {
-                                dest = checkProximityCase(current_agent).poll().get_edge().getDest();
+                                dest = Objects.requireNonNull(Objects.requireNonNull(checkProximityCase(current_agent)).poll()).get_edge().getDest();
                             }
                             _game.chooseNextEdge(current_agent.getID(),dest);
                             printMoves(current_agent, src, dest, closest);
@@ -246,7 +250,7 @@ public class Ex2 implements Runnable {
                         }
                     }
                     if (checkProximityCase(current_agent) != null) {
-                        dest = checkProximityCase(current_agent).poll().get_edge().getDest();
+                        dest = Objects.requireNonNull(Objects.requireNonNull(checkProximityCase(current_agent)).poll()).get_edge().getDest();
                     }
                     _game.chooseNextEdge(current_agent.getID(),dest);
                     printMoves(current_agent, src, dest, closest);
@@ -287,13 +291,13 @@ public class Ex2 implements Runnable {
     public synchronized static CL_Pokemon returnClosestPokemon(CL_Agent agent) {
         dw_graph_algorithms graph_algo = new DWGraph_Algo();
         graph_algo.init(_game_graph);
-        double path_lengh;
+        double path_length;
         HashMap<Double,CL_Pokemon> distance_map = new HashMap<>();
         List<Double> distances = new ArrayList<>();
         for (CL_Pokemon pokemon : _arena.getPokemons()) {
-            path_lengh = graph_algo.shortestPathDist(agent.getSrcNode(),pokemon.get_edge().getSrc());
-            distance_map.put(path_lengh,pokemon);
-            distances.add(path_lengh);
+            path_length = graph_algo.shortestPathDist(agent.getSrcNode(),pokemon.get_edge().getSrc());
+            distance_map.put(path_length,pokemon);
+            distances.add(path_length);
         }
         Collections.sort(distances);
         return distance_map.get(distances.get(0));
@@ -313,9 +317,7 @@ public class Ex2 implements Runnable {
         PriorityQueue<CL_Pokemon> poke_queue = new PriorityQueue<>(new Comparator<>() {
             @Override
             public int compare(CL_Pokemon poke1, CL_Pokemon poke2) {
-                if (poke1.getValue() > poke2.getValue()) return -1;
-                else if (poke1.getValue() < poke2.getValue()) return 1;
-                else return 0;
+                return Double.compare(poke2.getValue(), poke1.getValue());
             }
         });
         for (edge_data edge : _game_graph.getE(agent.getSrcNode())) {
@@ -349,9 +351,7 @@ public class Ex2 implements Runnable {
         PriorityQueue<CL_Pokemon> pokemon_value_queue = new PriorityQueue<>(new Comparator<>() {
             @Override
             public int compare(CL_Pokemon poke1, CL_Pokemon poke2) {
-                if (poke1.getValue() > poke2.getValue()) return -1;
-                else if (poke1.getValue() < poke2.getValue()) return 1;
-                else return 0;
+                return Double.compare(poke2.getValue(), poke1.getValue());
             }
         });
         pokemon_value_queue.addAll(_arena.getPokemons());
@@ -375,8 +375,8 @@ public class Ex2 implements Runnable {
             _game.addAgent(ThreadLocalRandom.current().nextInt(1, _game_graph.nodeSize()));
             treated_agents--;
         }
-        List<CL_Agent> result_agents_arenar = Arena.initAgentsFromJson(_game.getAgents());
-        _arena.setAgents(result_agents_arenar);
+        List<CL_Agent> result_agents_arena = Arena.initAgentsFromJson(_game.getAgents());
+        _arena.setAgents(result_agents_arena);
     }
 
     /**
@@ -389,23 +389,23 @@ public class Ex2 implements Runnable {
     public synchronized static List<CL_Pokemon> returnClosestPokemonArr(CL_Agent agent) {
         dw_graph_algorithms graph_algo = new DWGraph_Algo(_game_graph);
         List<CL_Pokemon> result = new ArrayList<>();
-        double path_lengh;
+        double path_length;
         HashMap<Double,CL_Pokemon> distance_map = new HashMap<>();
         List<Double> distances = new ArrayList<>();
         for (CL_Pokemon pokemon : _arena.getPokemons()) {
-            path_lengh = graph_algo.shortestPathDist(agent.getSrcNode(),pokemon.get_edge().getDest());
-            distance_map.put(path_lengh,pokemon);
-            distances.add(path_lengh);
+            path_length = graph_algo.shortestPathDist(agent.getSrcNode(),pokemon.get_edge().getDest());
+            distance_map.put(path_length,pokemon);
+            distances.add(path_length);
         }
         Collections.sort(distances);
-        for (int i=0; i<distances.size(); i++) {
-            result.add(distance_map.get(distances.get(i)));
+        for (Double distance : distances) {
+            result.add(distance_map.get(distance));
         }
         return result;
     }
 
     /**
-     * Resets the targetting of all the pokemons in the board by setting their
+     * Resets the targeting of all the pokemons in the board by setting their
      * "isTargeted" field to false. This method will be called before each
      * move planning operation
      *
@@ -422,19 +422,19 @@ public class Ex2 implements Runnable {
      * a specific area and will not leave it in order to avoid conflicts on the same area and maximise
      * the collected points in the game
      *
-     * @param agents
+     * @param agents List<CL_Agent> of the game agents
      */
     public synchronized static void setAgentsTargetedArea(List<CL_Agent> agents) {
         if (agents.size() <= 2) {
             return;
         }
-        int nodes_per_arenaea = (int) Math.ceil(((_game_graph.nodeSize()*1.0) / (agents.size()*1.0)) + 1);
-        System.out.println(nodes_per_arenaea);
+        int nodes_per_arena = (int) Math.ceil(((_game_graph.nodeSize()*1.0) / (agents.size()*1.0)) + 1);
+        System.out.println(nodes_per_arena);
         for (CL_Agent agent : agents) {
             int outer_index = 0;
             int neighbor = 0;
             HashSet<Integer> result = new HashSet<>();
-            while (outer_index < nodes_per_arenaea) {
+            while (outer_index < nodes_per_arena) {
                 if (_game_graph.getE(neighbor) != null && !result.contains(neighbor)) {
                     for (edge_data edge : _game_graph.getE(outer_index)) {
                         result.add(edge.getDest());
@@ -455,7 +455,7 @@ public class Ex2 implements Runnable {
      *
      * @param agent The agent to check the scenario for
      * @param target The node of the targeted pokemon
-     * @return
+     * @return long of the new time to sleep for the thread
      */
     public synchronized static long setTimeToSleep(CL_Agent agent, int target) {
         if (target == -1) {
@@ -480,9 +480,9 @@ public class Ex2 implements Runnable {
      * to receive the maximum distance in the graph and divides it by a constant factor.
      * This function is another effective way to avoid more than one pokemon to occupy the same area
      *
-     * @param agent The acurrent agent to check conflict with the other agents
+     * @param agent The current agent to check conflict with the other agents
      * @param target The targeted pokemon for the conflict check
-     * @return
+     * @return True if the is another agent with proximity to this nodes targeted pokemon false otherwise
      */
     public synchronized static boolean checkAgentProximityConflict(CL_Agent agent, CL_Pokemon target) {
         double distanceModifier = getGraphMaxDistance() / (_arena.getAgents().size()+_proximity_factor);

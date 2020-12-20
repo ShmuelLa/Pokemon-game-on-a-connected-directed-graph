@@ -133,3 +133,10 @@ Implemented in `mainTestGraph()` and `mainTestGraphAlg()` accordingly
 ### JFrame
 - https://www.youtube.com/watch?v=4T3WJEH7zrc
 - https://www.youtube.com/watch?v=Kmgo00avvEw
+
+
+## Game Results
+| **Stage**      |    **Moves** | **Grade** |
+|--------------|---------------|-------------|
+| 11 | 1098 | 1383 |
+| 23 | 1084 | 420 |
