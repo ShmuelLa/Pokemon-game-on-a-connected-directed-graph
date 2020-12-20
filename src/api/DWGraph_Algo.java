@@ -55,7 +55,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      * @return
      */
     @Override
-    public boolean isConnected() {
+    public synchronized boolean isConnected() {
         if (this._algo_graph.nodeSize() <= 1 || this._algo_graph == null) return true;
         Queue<Integer> queue = new LinkedList<>();
         HashSet<Integer> visited = new HashSet<>();

@@ -84,7 +84,7 @@ public class Gframe extends JFrame implements MouseListener{
             e.printStackTrace();
         }
         //Enter a Level
-        text.setText("12");
+        text.setText("11");
         text.setFont(new Font("Arial", Font.PLAIN, 14));
         text.setBounds((int)(50*reScaleX), (int)(50*reScaleY), 100, 25);
         text.addMouseListener(this);
