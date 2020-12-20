@@ -203,7 +203,7 @@ public class Arena {
 		}
 	}
 
-	private static boolean isOnEdge(edge_data edge, CL_Pokemon pokemon, directed_weighted_graph graph) {
+	public static boolean isOnEdge(edge_data edge, CL_Pokemon pokemon, directed_weighted_graph graph) {
 		int src = edge.getSrc();
 		int dest = edge.getDest();
 		if ((pokemon.getType() < 0 && dest > src) || (pokemon.getType() > 0 && src > dest)) {

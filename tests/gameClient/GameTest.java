@@ -3,6 +3,7 @@ package gameClient;
 import Server.Game_Server_Ex2;
 import api.*;
 import com.google.gson.*;
+import gameClient.util.Gframe;
 import gameClient.util.Point3D;
 import org.junit.jupiter.api.Test;
 import static gameClient.Arena.*;
@@ -14,7 +15,19 @@ import java.util.concurrent.ThreadLocalRandom;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class GameTest {
+class GameTest<_game> {
+    private static Arena _arena;
+    private static game_service _game;
+    public static long _sleep_time = 90;
+    public static directed_weighted_graph _graph;
+
+    public void testGameStarter(int scenario) {
+        _game = Game_Server_Ex2.getServer(scenario);
+        _graph = Arena.parseGraph(_game.getGraph());
+        _arena = new Arena(_game);
+        placeAgents(_game,_arena.getPokemons(),_graph);
+        _arena.updateArena(_game);
+    }
 
     public static directed_weighted_graph loadGraphJson(String Json, String filename) {
         directed_weighted_graph game_graph = new DWGraph_DS();
@@ -31,6 +44,42 @@ class GameTest {
             e.printStackTrace();
         }
         return game_graph_algo.getGraph();
+    }
+
+    public synchronized static PriorityQueue<CL_Pokemon> checkProximityCase(CL_Agent agent, List<CL_Pokemon> pokemons) {
+        PriorityQueue<CL_Pokemon> poke_queue = new PriorityQueue<>(new Comparator<>() {
+            @Override
+            public int compare(CL_Pokemon poke1, CL_Pokemon poke2) {
+                if (poke1.getValue() > poke2.getValue()) return -1;
+                else if (poke1.getValue() < poke2.getValue()) return 1;
+                else return 0;
+            }
+        });
+        for (edge_data edge : _graph.getE(agent.getSrcNode())) {
+            for (CL_Pokemon pokemon : pokemons) {
+                if(Arena.isOnEdge(edge, pokemon, _graph)) {
+                    if (pokemon.getType() > 0 && (pokemon.get_edge().getSrc() < pokemon.get_edge().getDest())) {
+                        poke_queue.add(pokemon);
+                    }
+                    else if (pokemon.getType() < 0 && (pokemon.get_edge().getSrc() > pokemon.get_edge().getDest())) {
+                        poke_queue.add(pokemon);
+                    }
+                }
+            }
+        }
+        if (!poke_queue.isEmpty()) return poke_queue;
+        else return null;
+    }
+
+    public static ArrayList<CL_Agent> initAgentsFromJson(String json) {
+        ArrayList<CL_Agent> result = new ArrayList<>();
+        JsonObject agents_obj = JsonParser.parseString(json).getAsJsonObject();
+        JsonArray J_obj = agents_obj.getAsJsonArray("Agents");
+        for (JsonElement gson : J_obj) {
+            JsonObject json_agent = gson.getAsJsonObject();
+            result.add(new CL_Agent(json_agent,_graph));
+        }
+        return result;
     }
 
     public static void placeAgents(game_service game, List<CL_Pokemon> pokemons, directed_weighted_graph graph) {
@@ -50,11 +99,15 @@ class GameTest {
         for(int i = 0; i < agents_number; i++) {
             if (!pokemon_value_queue.isEmpty()) {
                 CL_Pokemon c_pokemon = pokemon_value_queue.poll();
-                int pokemon_dest_node = c_pokemon.get_edge().getSrc();
-                if(c_pokemon.getType() < 0) {
-                    pokemon_dest_node = c_pokemon.get_edge().getDest();
+                if (c_pokemon.getType() > 0) {
+                    Math.min(c_pokemon.get_edge().getSrc(),c_pokemon.get_edge().getDest());
+                    game.addAgent(Math.min(c_pokemon.get_edge().getSrc(),c_pokemon.get_edge().getDest()));
                 }
-                game.addAgent(pokemon_dest_node);
+                else if (c_pokemon.getType() < 0) {
+                    Math.max(c_pokemon.get_edge().getSrc(),c_pokemon.get_edge().getDest());
+                    game.addAgent(Math.max(c_pokemon.get_edge().getSrc(),c_pokemon.get_edge().getDest()));
+                }
+                //game.addAgent(c_pokemon.get_edge().getSrc());
                 treated_agents--;
             }
         }
@@ -62,6 +115,8 @@ class GameTest {
             game.addAgent(ThreadLocalRandom.current().nextInt(1, graph.nodeSize()));
             treated_agents--;
         }
+        System.out.println(game.getAgents());
+        List<CL_Agent> result_agents_arr = initAgentsFromJson(game.getAgents());
     }
 
     @Test
@@ -75,7 +130,6 @@ class GameTest {
     void gameJsonTests() {
         game_service game = Game_Server_Ex2.getServer(11);
         System.out.println(game.getAgents());
-        //game.addAgent(1);
         System.out.println(game.toString());
         JsonObject json_obj = JsonParser.parseString(game.toString()).getAsJsonObject();
         System.out.println(json_obj.getAsJsonObject("GameServer").get("agents").getAsInt());
@@ -121,7 +175,6 @@ class GameTest {
         for (CL_Pokemon pokemon : pokemon_list) {
             Arena.updateEdge(pokemon, graph);
         }
-        placeAgents(game,pokemon_list,graph);
         PriorityQueue<CL_Pokemon> pokemon_value_queue = new PriorityQueue<>(new Comparator<>() {
             @Override
             public int compare(CL_Pokemon poke1, CL_Pokemon poke2) {
@@ -133,7 +186,7 @@ class GameTest {
         pokemon_value_queue.addAll(pokemon_list);
         System.out.println(game.getAgents());
         ArrayList<Integer> agents_sources = new ArrayList<>();
-        JsonObject agents_obj = JsonParser.parseString(game.getAgents()).getAsJsonObject();
+        JsonObject agents_obj = JsonParser.parseString(_game.getAgents()).getAsJsonObject();
         JsonArray J_obj = agents_obj.getAsJsonArray("Agents");
         for (JsonElement gson : J_obj) {
             JsonObject json_agent = gson.getAsJsonObject();
@@ -172,12 +225,9 @@ class GameTest {
         game_service game = Game_Server_Ex2.getServer(11);
         directed_weighted_graph graph = parseGraph(game.getGraph());
         ArrayList<CL_Pokemon> pokemon_list = initPokemonsFromJson(game.getPokemons());
-        System.out.println(game.getAgents());
         for (CL_Pokemon pokemon : pokemon_list) {
             Arena.updateEdge(pokemon, graph);
         }
-        placeAgents(game,pokemon_list,graph);
-        System.out.println(game.getAgents());
         PriorityQueue<CL_Pokemon> pokemon_value_queue = new PriorityQueue<>(new Comparator<>() {
             @Override
             public int compare(CL_Pokemon poke1, CL_Pokemon poke2) {
@@ -191,11 +241,38 @@ class GameTest {
 
     @Test
     void stuckScenarioTest() {
-        game_service game = Game_Server_Ex2.getServer(11);
-        directed_weighted_graph graph = parseGraph(game.getGraph());
+        testGameStarter(11);
         dw_graph_algorithms algo = new DWGraph_Algo();
-        algo.init(graph);
+        algo.init(_graph);
         System.out.println(algo.shortestPath(1,26).get(1).getKey());
+        System.out.println(algo.shortestPath(1,26).size());
+        for (node_data n : algo.shortestPath(1,26)) {
+            System.out.print(n.getKey() + " ");
+        }
+/*        CL_Pokemon poke1 = new CL_Pokemon()
+        returnClosestPokemon(_arena.getPokemons(),);*/
+    }
+
+    @Test
+    void closestPokemonTest() {
+        testGameStarter(11);
+        for (CL_Agent agent : _arena.getAgents()) {
+            if (agent.getID() == 0) {
+                for (CL_Pokemon pokemon : _arena.getPokemons()) {
+                    if (pokemon.getValue() == 13) {
+                        System.out.println(Ex2.returnClosestPokemon(_arena.getPokemons(),agent,_graph).get_edge().toString());
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void proximityCase() {
+        testGameStarter(11);
+        CL_Agent agent = new CL_Agent(2, 1, 7,_graph);
+        PriorityQueue<CL_Pokemon> pq_pokemon = checkProximityCase(agent,_arena.getPokemons());
+        assertEquals(pq_pokemon.poll().get_edge().getDest(),6);
     }
 }
 
