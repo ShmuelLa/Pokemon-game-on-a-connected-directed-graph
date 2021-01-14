@@ -97,12 +97,4 @@ class DWGraph_AlgoTest {
             e.printStackTrace();
         }
     }
-
-    @Test
-    void ex3_timing_test1() {
-        ArrayList<ArrayList> list1 = new ArrayList<>();
-        ArrayList<Integer> list2 = new ArrayList<>();
-        list1.add(list2);
-        System.out.println(list1);
-    }
 }
