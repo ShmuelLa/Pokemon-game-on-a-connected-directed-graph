@@ -10,6 +10,14 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     directed_weighted_graph _algo_graph = new DWGraph_DS();
     static HashSet<node_data> _scc_stack = new HashSet<>();
 
+    public DWGraph_Algo() {
+        _algo_graph = null;
+    }
+
+    public DWGraph_Algo(directed_weighted_graph graph) {
+        _algo_graph = graph;
+    }
+
     /**
      * Init the graph on which this set of algorithms operates on.
      *
@@ -58,7 +66,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      * @return
      */
     @Override
-    public boolean isConnected() {
+    public synchronized boolean isConnected() {
         if (this._algo_graph.nodeSize() <= 1 || this._algo_graph == null) return true;
         Queue<Integer> queue = new LinkedList<>();
         HashSet<Integer> visited = new HashSet<>();

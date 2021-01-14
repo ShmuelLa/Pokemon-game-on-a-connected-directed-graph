@@ -3,6 +3,10 @@ package api;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Represents a node in the Graph
+ *
+ */
 public class NodeData implements node_data, Comparable<node_data> {
     @Expose
     @SerializedName("pos")
@@ -47,7 +51,7 @@ public class NodeData implements node_data, Comparable<node_data> {
     /**
      * Returns the key (id) associated with this node.
      *
-     * @return
+     * @return this nodes key
      */
     @Override
     public int getKey() {
@@ -58,7 +62,7 @@ public class NodeData implements node_data, Comparable<node_data> {
      * Returns the location of this node, if
      * none return null.
      *
-     * @return
+     * @return this nodes location
      */
     @Override
     public geo_location getLocation() {
@@ -78,7 +82,7 @@ public class NodeData implements node_data, Comparable<node_data> {
     /**
      * Returns the weight associated with this node.
      *
-     * @return
+     * @return this nodes weight
      */
     @Override
     public double getWeight() {
@@ -98,7 +102,7 @@ public class NodeData implements node_data, Comparable<node_data> {
     /**
      * Returns the remark (meta data) associated with this node.
      *
-     * @return
+     * @return this nodes remark (info)
      */
     @Override
     public String getInfo() {
