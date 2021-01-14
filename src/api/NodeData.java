@@ -16,6 +16,7 @@ public class NodeData implements node_data, Comparable<node_data> {
     private int _tag;
     private double _weight;
     private String _str;
+    public boolean _on_scc_stack = false;
 
     /**
      * The main node_data constructor. Creates a new node with the received ID
@@ -27,6 +28,24 @@ public class NodeData implements node_data, Comparable<node_data> {
         this._tag = -1;
         this._str = null;
         this._location = new GeoLocation();
+        this._on_scc_stack = false;
+    }
+
+    /**
+     * Sets this graph scc stack statuc
+     * @param val new bool value
+     */
+    public void set_scc_stack(boolean val) {
+        this._on_scc_stack = val;
+    }
+
+    /**
+     * Returns node scc stack status
+     *
+     * @return bool - true is on stack false otherwise
+     */
+    public boolean get_scc_stack() {
+        return this._on_scc_stack;
     }
 
     /**

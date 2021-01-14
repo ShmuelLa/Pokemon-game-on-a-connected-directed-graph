@@ -1,11 +1,14 @@
 package api;
 
 import com.google.gson.*;
+import org.w3c.dom.Node;
+
 import java.io.*;
 import java.util.*;
 
 public class DWGraph_Algo implements dw_graph_algorithms {
     directed_weighted_graph _algo_graph = new DWGraph_DS();
+    static HashSet<node_data> _scc_stack = new HashSet<>();
 
     public DWGraph_Algo() {
         _algo_graph = null;
@@ -319,5 +322,94 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         directed_weighted_graph g_obj = (DWGraph_DS) obj;
         if (_algo_graph.edgeSize() != g_obj.edgeSize() || _algo_graph.nodeSize() != g_obj.nodeSize()) return false;
         return Objects.equals(_algo_graph.toString(), g_obj.toString());
+    }
+
+    /**
+     * Returns the graph connected components
+     *
+     * @return List of connected components list's
+     */
+    public ArrayList<ArrayList> scc() {
+        ArrayList<ArrayList> result = new ArrayList<>();
+        if (this._algo_graph.nodeSize() == 0) {
+            return result;
+        }
+        _scc_stack.clear();
+        for (node_data node : this._algo_graph.getV()) {
+            if (!_scc_stack.contains(node)) {
+                ArrayList<Integer> tmp_list = scc_bfs(node.getKey());
+                result.add(tmp_list);
+                for (Integer nk : tmp_list) {
+                    _scc_stack.add(this._algo_graph.getNode(nk));
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns true if and only if (iff) there is a valid path from each node to each
+     * other node. NOTE: assume directional graph (all n*(n-1) ordered pairs).
+     *
+     * @return
+     */
+    public ArrayList<Integer> scc_bfs(int node) {
+        Queue<Integer> queue = new LinkedList<>();
+        HashSet<Integer> visited = new HashSet<>();
+        ArrayList<Integer> result = new ArrayList<>();
+        ArrayList<Integer> list1 = new ArrayList<>();
+        ArrayList<Integer> list2 = new ArrayList<>();
+        int tmp_node = this._algo_graph.getV().iterator().next().getKey();
+        int test_node = tmp_node;
+        queue.add(tmp_node);
+        visited.add(tmp_node);
+        if (this._algo_graph.getE(node).size() == 0) {
+            return result;
+        }
+        while (!queue.isEmpty()) {
+            tmp_node=queue.poll();
+            for (edge_data edge : this._algo_graph.getE(tmp_node)) {
+                if (!visited.contains(edge.getDest())) {
+                    visited.add(edge.getDest());
+                    queue.add(edge.getDest());
+                }
+            }
+        }
+        directed_weighted_graph reversed_graph = new DWGraph_DS();
+        for (node_data n : this._algo_graph.getV()) {
+            if (n.getInfo() == "y") {
+                list1.add(n.getKey());
+            }
+            reversed_graph.addNode(n);
+        }
+        for (node_data n : this._algo_graph.getV()) {
+            for (edge_data e : this._algo_graph.getE(n.getKey())) {
+                reversed_graph.connect(e.getDest(),e.getSrc(),e.getWeight());
+            }
+        }
+        if (reversed_graph.getE(node).size() == 0) {
+            return result;
+        }
+        queue.clear();
+        visited.clear();
+        tmp_node = test_node;
+        queue.add(test_node);
+        visited.add(tmp_node);
+        while (!queue.isEmpty()) {
+            tmp_node=queue.poll();
+            for (edge_data edge : reversed_graph.getE(tmp_node)) {
+                if (!visited.contains(edge.getDest())) {
+                    visited.add(edge.getDest());
+                    queue.add(edge.getDest());
+                }
+            }
+        }
+        for (node_data nnn : reversed_graph.getV()) {
+            if (nnn.getInfo() == "y") {
+                list2.add(nnn.getKey());
+            }
+        }
+        list1.retainAll(list2);
+        return list1;
     }
 }
