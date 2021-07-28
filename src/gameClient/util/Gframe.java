@@ -87,7 +87,7 @@ public class Gframe extends JFrame implements MouseListener{
         System.out.println(rex);
         button.setBounds(370, 497, 60, 60);
         try{
-            File file = new File("resources/pokeball1.png");
+            File file = new File("C:/Users/Gidon/Desktop/temp/Pokemon-game-on-a-connected-directed-graph/resources/pokeball.png");
             ball = ImageIO.read(file);
             Image im = ball.getScaledInstance(button.getWidth(),button.getHeight(),Image.SCALE_SMOOTH);
             ImageIcon ans = new ImageIcon(im);

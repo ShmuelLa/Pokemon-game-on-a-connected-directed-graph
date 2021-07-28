@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import gameClient.util.Gframe;
 import gameClient.util.compAdapt;
+import gameClient.util.myMusic;
+
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -32,8 +34,8 @@ public class Ex2 implements Runnable {
     private static final double _proximity_factor = 7;
 
     public synchronized static void main(String[] args) {
-        _id = Integer.parseInt(args[0]);
-        _scenario = Integer.parseInt(args[1]);
+//        _id = Integer.parseInt(args[0]);
+//        _scenario = Integer.parseInt(args[1]);
         Thread client = new Thread(new Ex2());
         client.start();
     }
@@ -72,6 +74,8 @@ public class Ex2 implements Runnable {
             gframe.setDefaultCloseOperation(EXIT_ON_CLOSE);
             gframe.initMain();
             gframe.show();
+            myMusic music = new myMusic(0);
+
             long fps = 2;
             while (!gframe.getPressed()) {
                 try {
@@ -86,11 +90,13 @@ public class Ex2 implements Runnable {
             init();
             adapt = new compAdapt();
             adapt.setFrame(gframe);
-            gframe.setSize(800, 600);
+//            gframe.setSize(800, 600);
+            gframe.setExtendedState(gframe.MAXIMIZED_BOTH);
             gframe.setResizable(true);
             gframe.addComponentListener(adapt);
+
         }
-        gframe.setTitle("Pokemon Game - Scenario number: "+_scenario);
+        gframe.setTitle("Pokemon Game - Scenario number: 11");
         gframe.setDefaultCloseOperation(EXIT_ON_CLOSE);
         setAgentsTargetedArea(_arena.getAgents());
         _game.startGame();
